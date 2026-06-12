@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teal Lanka - Monthly Production Books</title>
+    <style>
+        /* 📱 ඇප් එකේ මුළු Screen එකම එක තැනක ලොක් කරනවා (පිටුව පිටින්ම පහළට යන්නේ නැහැ) */
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            color: #333; 
+        }
+        
+        /* ප්‍රධාන Container එක Screen එකේ උසට (Full Height) සෙට් කිරීම */
+        .container { 
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+            padding: 15px;
+        }
+        
+        h2 { text-align: center; color: #28a745; margin: 5px 0; font-size: 20px; }
+        h4 { text-align: center; margin: 0 0 10px 0; color: #555; font-size: 14px; }
+        
+        /* Menu */
+        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .nav-links a { text-decoration: none; padding: 6px 12px; background: #007acc; color: white; border-radius: 5px; font-size: 13px; font-weight: bold; }
+        .nav-links a.active { background: #28a745; }
+
+        /* Filter Area Styling */
+        .filter-area { background: #e9ecef; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: center; }
+        .filter-group { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+        .filter-group label { font-weight: bold; }
+        .filter-group select, .filter-group input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 13px; }
+        
+        /* 📜 වගුව විතරක් ස්ක්‍රෝල් වෙන ප්‍රධාන කොටස (ඇප් එකට වැදගත්ම කොටස) */
+        .table-responsive { 
+            flex: 1; /* ඉතිරි වී ඇති සම්පූර්ණ ඉඩ වගුවට ලබා දෙයි */
+            overflow-y: auto; /* සිරස් අතට ස්ක්‍රෝල් වේ */
+            overflow-x: auto; /* හරස් අතට ස්ක්‍රෝල් වේ */
+            border: 1px solid #aaaaaa;
+            background: white;
+        }
+        
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
+        th, td { border: 1px solid #aaaaaa; padding: 8px; text-align: center; }
+        
+        /* 📌 ඇප් එක ඇතුළේ Headers ටික නූලටම එක තැනක Sticky කරවන කෝඩ් එක */
+        th { 
+            background-color: #28a745; 
+            color: white; 
+            font-weight: bold; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; /* හැමදේටම උඩින් පෙනීමට */
+        }
+        
+        /* දිනය තියෙන කොටුව (Rowspan වෙන කොටුව) ස්ක්‍රෝල් වෙද්දී මැකී නොයන්න */
+        td[rowspan] {
+            position: sticky;
+            left: 0;
+            background-color: #ffffff !important;
+            z-index: 5;
+        }
+        
+        .filled-row { background-color: #e8f5e9; font-weight: bold; color: #1b5e20; }
+        .empty-row { background-color: #ffffff; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="nav-links">
+        <a href="index.html">📥 Data Entry Form</a>
+        <a href="operator1.html" class="active">📊 View Monthly Books</a>
+    </div>
+
+    <h2>📊 MONTHLY PRODUCTION SHEETS</h2>
+    <h4>Teal Lanka Production Plan</h4>
+    
+    <div class="filter-area">
+        <div class="filter-group">
+            <label for="operatorFilter">Select Operator:</label>
+            <select id="operatorFilter">
+                <option value="" disabled selected hidden>Select Operator</option>
+                <option value="Operator 1">Operator RS</option>
+                <option value="Operator 2">Operator TK</option>
+                <option value="Operator 3">Operator K</option>
+                <option value="Operator 4">Operator QST</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="monthFilter">Select Month & Year:</label>
+            <input type="month" id="monthFilter">
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Date</th>
+                    <th>Variety</th>
+                    <th>WK</th>
+                    <th>Transfer</th>
+                    <th>Used</th>
+                    <th>Multy</th>
+                    <th>Rooting</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody id="productionTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBRLKdJqdC4kwT4qPvHBPjf1vX2viSBxqg",
+        authDomain: "teal-lanka-daily-production.firebaseapp.com",
+        projectId: "teal-lanka-daily-production",
+        storageBucket: "teal-lanka-daily-production.firebasestorage.app",
+        messagingSenderId: "410469764864",
+        appId: "1:410469764864:web:e5390cb0d8d00781d86de5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Firebase Offline Persistence (ඇප් එක ඇතුළේ ඩේටා බ්ලොක් නොවී වේගයෙන් ලෝඩ් වෙන්න)
+    firebase.firestore().enablePersistence().catch(function(err) { console.log(err.code); });
+
+    const today = new Date();
+    document.getElementById('monthFilter').value = today.toISOString().substring(0, 7);
+
+    renderMonthlySheet();
+    document.getElementById('monthFilter').addEventListener('change', renderMonthlySheet);
+    document.getElementById('operatorFilter').addEventListener('change', renderMonthlySheet);
+
+    function renderMonthlySheet() {
+        const tableBody = document.getElementById('productionTableBody');
+        tableBody.innerHTML = `<tr><td colspan="8" style="color:blue; font-weight:bold; padding:20px;">Loading Book Data... Please Wait...</td></tr>`; 
+
+        const selectedMonth = document.getElementById('monthFilter').value; 
+        const selectedOperator = document.getElementById('operatorFilter').value; 
+
+        const [year, month] = selectedMonth.split("-");
+        const daysInMonth = new Date(year, month, 0).getDate(); 
+
+        const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+        const localISODate = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+
+        let monthlyTemplate = {};
+        for (let d = 1; d <= daysInMonth; d++) {
+            let dayStr = d < 10 ? `0${d}` : `${d}`;
+            monthlyTemplate[`${selectedMonth}-${dayStr}`] = []; 
+        }
+
+        db.collection("Production_Records").orderBy("timestamp", "asc").get()
+        .then((querySnapshot) => {
+            tableBody.innerHTML = ""; 
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.operator === selectedOperator && data.date && monthlyTemplate[data.date] !== undefined) {
+                    monthlyTemplate[data.date].push(data); 
+                }
+            });
+            
+            for (let dateKey in monthlyTemplate) {
+                const recordsArray = monthlyTemplate[dateKey]; 
+                const dayNumber = dateKey.split("-")[2]; 
+
+                if (recordsArray.length > 0) {
+                    recordsArray.forEach((record, index) => {
+                        let row = `<tr class="filled-row">`;
+                        
+                        if (index === 0) {
+                            row += `<td rowspan="${recordsArray.length}" style="vertical-align: middle; color: #333;"><b>${dayNumber}</b></td>`;
+                        }
+                        
+                        row += `
+                            <td>${record.variety || '-'}</td>
+                            <td>${record.wk || '0'}</td>
+                            <td>${record.transfer || '0'}</td>
+                            <td>${record.used || '0'}</td>
+                            <td>${record.multy || '0'}</td>
+                            <td>${record.rooting || '0'}</td>
+                            <td style="text-align:left;">${record.remarks ? record.remarks : '-'}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else {
+                    if (dateKey < localISODate) {
+                        tableBody.innerHTML += `<tr class="empty-row">
+                            <td><b>${dayNumber}</b></td>
+                            <td colspan="7" style="text-align: center; font-weight: bold; color: #777;">Holiday</td>
+                        </tr>`;
+                    } else {
+                        tableBody.innerHTML += `<tr class="empty-row">
+                            <td><b>${dayNumber}</b></td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>`;
+                    }
+                }
+            }
+        })
+        .catch((error) => {
+            tableBody.innerHTML = `<tr><td colspan="8" style="color: red;">Error loading data: ${error.message}</td></tr>`;
+        });
+    }
+</script>
+</body>
+</html>

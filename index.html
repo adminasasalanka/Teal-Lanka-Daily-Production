@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teal Lanka - Data Entry Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; list-style: none; padding: 0; }
+        .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
+        .nav-links a.active { background: #00875a; }
+        .container { max-width: 950px; margin: auto; background: white; padding: 0 0 30px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border-top: 6px solid #00875a; }
+        .form-header { text-align: center; padding: 20px 10px 5px 10px; }
+        .form-header h2 { margin: 0; color: #2c3e50; font-size: 26px; font-weight: bold; }
+        .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 14px; }
+        .divider { height: 2px; background-color: #00875a; margin: 15px 30px; }
+        .form-body { padding: 0 30px; }
+        label { font-weight: bold; display: block; margin-top: 15px; color: #2c3e50; font-size: 14px; }
+        input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        .data-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 8px; align-items: center; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
+        .row-headers { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 8px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 10px; }
+        .btn-add-row { background-color: #00875a; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-submit { width: 100%; padding: 14px; background-color: #2575fc; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
+        .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 30px 0 30px; font-weight: bold; border: 2px solid #c3e6cb; }
+    </style>
+</head>
+<body>
+
+<div class="nav-links">
+    <a href="index.html" class="active">📝 Data Entry Form</a>
+    <a href="operator1.html">📊 View Monthly Books</a>
+</div>
+
+<div class="container">
+    <div class="form-header">
+        <h2>Teal Lanka Bio Tech</h2>
+        <p>Production Data Entry Form</p>
+    </div>
+    <div class="divider"></div>
+    <div class="form-body">
+        <form id="productionForm">
+            <div style="max-width: 300px;">
+                <label for="operator">Operator Code</label>
+                <select id="operator" required>
+                    <option value="" disabled selected hidden>Select Operator</option>
+                    <option value="Operator 1">Operator RS</option>
+                    <option value="Operator 2">Operator TK</option>
+                    <option value="Operator 3">Operator K</option>
+                    <option value="Operator 4">Operator QST</option>
+                </select>
+            </div>
+            <div style="margin-top: 25px;">
+                <div class="row-headers">
+                    <div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div><div>Multy</div><div>Rooting</div><div>Remarks</div><div>Action</div>
+                </div>
+                <div id="dynamicRowsContainer">
+                    <div class="data-row">
+                        <input type="text" class="field-variety" placeholder="Variety" required>
+                        <input type="number" class="field-wk" placeholder="WK" required>
+                        <input type="number" class="field-transfer" placeholder="Transfer" required>
+                        <input type="number" class="field-used" placeholder="Used" required>
+                        <input type="number" class="field-multy" placeholder="Multy" required>
+                        <input type="number" class="field-rooting" placeholder="Rooting" required>
+                        <input type="text" class="field-remarks" placeholder="Remarks">
+                        <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
+                    </div>
+                </div>
+                <button type="button" class="btn-add-row" id="btnAddRow">+ Add Item Row</button>
+            </div>
+            <button type="submit" class="btn-submit" id="btnSubmit">SUBMIT PRODUCTION DATA</button>
+        </form>
+    </div>
+    <div id="successMessage" class="success-box">🎉 Thank You!<br><span style="font-size: 14px; font-weight: normal;">Your Production Data Has Been Submitted Successfully.</span></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBRLKdJqdC4kwT4qPvHBPjf1vX2viSBxqg",
+        authDomain: "teal-lanka-daily-production.firebaseapp.com",
+        projectId: "teal-lanka-daily-production",
+        storageBucket: "teal-lanka-daily-production.firebasestorage.app",
+        messagingSenderId: "410469764864",
+        appId: "1:410469764864:web:e5390cb0d8d00781d86de5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.getElementById('btnAddRow').addEventListener('click', () => {
+        const newRow = document.createElement('div');
+        newRow.className = 'data-row';
+        newRow.innerHTML = `
+            <input type="text" class="field-variety" placeholder="Variety" required>
+            <input type="number" class="field-wk" placeholder="WK" required>
+            <input type="number" class="field-transfer" placeholder="Transfer" required>
+            <input type="number" class="field-used" placeholder="Used" required>
+            <input type="number" class="field-multy" placeholder="Multy" required>
+            <input type="number" class="field-rooting" placeholder="Rooting" required>
+            <input type="text" class="field-remarks" placeholder="Remarks">
+            <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
+        `;
+        document.getElementById('dynamicRowsContainer').appendChild(newRow);
+    });
+
+    function removeRow(button) {
+        const container = document.getElementById('dynamicRowsContainer');
+        if (container.getElementsByClassName('data-row').length > 1) { button.parentElement.remove(); }
+        else { alert("At least one data row must be kept!"); }
+    }
+
+    document.getElementById('productionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btnSubmit = document.getElementById('btnSubmit');
+        const successBox = document.getElementById('successMessage');
+        const form = document.getElementById('productionForm');
+        const selectedOperator = document.getElementById('operator').value;
+        
+        const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+        const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+        const currentTimeStr = new Date().toTimeString().split(' ')[0];
+
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "CHECKING VALIDATION...";
+
+        try {
+            // 🔍 1. Check if already submitted today
+            const querySnapshot = await db.collection("Production_Records")
+                .where("operator", "==", selectedOperator)
+                .where("date", "==", todayStr)
+                .get();
+
+            if (!querySnapshot.empty) {
+                alert(`⚠️ Already Submitted Today!\n${selectedOperator} has already entered data for ${todayStr}.`);
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+                return;
+            }
+
+            btnSubmit.innerText = "SAVING DATA...";
+            const batch = db.batch();
+            const allDataRows = document.getElementById('dynamicRowsContainer').getElementsByClassName('data-row');
+
+            for (let row of allDataRows) {
+                const docRef = db.collection("Production_Records").doc();
+                batch.set(docRef, {
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    date: todayStr,
+                    time: currentTimeStr,
+                    operator: selectedOperator,
+                    variety: row.querySelector('.field-variety').value,
+                    wk: row.querySelector('.field-wk').value,
+                    transfer: row.querySelector('.field-transfer').value,
+                    used: row.querySelector('.field-used').value,
+                    multy: row.querySelector('.field-multy').value,
+                    rooting: row.querySelector('.field-rooting').value,
+                    remarks: row.querySelector('.field-remarks').value || '-'
+                });
+            }
+
+            await batch.commit();
+            form.style.display = 'none';
+            successBox.style.display = 'block';
+
+            setTimeout(() => {
+                form.reset();
+                document.getElementById('dynamicRowsContainer').innerHTML = `
+                    <div class="data-row">
+                        <input type="text" class="field-variety" placeholder="Variety" required>
+                        <input type="number" class="field-wk" placeholder="WK" required>
+                        <input type="number" class="field-transfer" placeholder="Transfer" required>
+                        <input type="number" class="field-used" placeholder="Used" required>
+                        <input type="number" class="field-multy" placeholder="Multy" required>
+                        <input type="number" class="field-rooting" placeholder="Rooting" required>
+                        <input type="text" class="field-remarks" placeholder="Remarks">
+                        <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
+                    </div>
+                `;
+                successBox.style.display = 'none';
+                form.style.display = 'block';
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+            }, 2500);
+
+        } catch (error) {
+            alert("Error: " + error.message);
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+        }
+    });
+</script>
+</body>
+</html>
