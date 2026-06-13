@@ -2,71 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Teal Lanka - Monthly Production Books</title>
     <style>
-        /* 📱 ඇප් එකේ මුළු Screen එකම එක තැනක ලොක් කරනවා (පිටුව පිටින්ම පහළට යන්නේ නැහැ) */
+        /* 📱 ඇප් එකේ මුළු පිටුවම උඩ/පහළ සාමාන්‍ය පරිදි ස්ක්‍රෝල් වීමට ඉඩ සලසයි */
         html, body { 
-            height: 100%; 
             margin: 0; 
             padding: 0; 
-            overflow: hidden; 
+            overflow-y: auto; /* ඇප් එකේ ඕනෑම තැනක Touch කර ස්ක්‍රෝල් කිරීමට */
+            overflow-x: hidden; 
             font-family: Arial, sans-serif; 
             background-color: #f4f4f9; 
             color: #333; 
         }
         
-        /* ප්‍රධාන Container එක Screen එකේ උසට (Full Height) සෙට් කිරීම */
+        /* ප්‍රධාන Container එක */
         .container { 
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
             box-sizing: border-box;
-            padding: 15px;
+            padding: 10px;
+            padding-top: 185px; /* 📌 ඉහළ ලොක් කරපු කොටසට යටින් වගුවේ දත්ත පටන් ගැනීමට තැබූ ඉඩ */
         }
         
-        h2 { text-align: center; color: #28a745; margin: 5px 0; font-size: 20px; }
-        h4 { text-align: center; margin: 0 0 10px 0; color: #555; font-size: 14px; }
+        /* 📌 ඇප් එකේ Title, Buttons සහ වගුවේ කොළ පාට Header එක ඔක්කොම එකට තබා උඩින්ම LOCK කරන කොටස */
+        .fixed-complete-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f4f4f9;
+            z-index: 1000; /* හැමදේටම උඩින් පෙනීමට */
+            padding: 10px 10px 0 10px;
+            box-sizing: border-box;
+        }
+
+        h2 { text-align: center; color: #28a745; margin: 3px 0; font-size: 18px; }
+        h4 { text-align: center; margin: 0 0 8px 0; color: #555; font-size: 13px; }
         
-        /* Menu */
-        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        /* Menu Buttons */
+        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
         .nav-links a { text-decoration: none; padding: 6px 12px; background: #007acc; color: white; border-radius: 5px; font-size: 13px; font-weight: bold; }
         .nav-links a.active { background: #28a745; }
 
-        /* Filter Area Styling */
-        .filter-area { background: #e9ecef; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: center; }
-        .filter-group { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+        /* Filter Dropdowns Area */
+        .filter-area { background: #e9ecef; padding: 6px; border-radius: 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: center; }
+        .filter-group { display: flex; align-items: center; gap: 5px; font-size: 12px; }
         .filter-group label { font-weight: bold; }
-        .filter-group select, .filter-group input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 13px; }
+        .filter-group select, .filter-group input { padding: 5px 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 12px; }
         
-        /* 📜 වගුව විතරක් ස්ක්‍රෝල් වෙන ප්‍රධාන කොටස (ඇප් එකට වැදගත්ම කොටස) */
+        /* 📜 වගුව වටා ඇති කොටස - වමට/දකුණට (Horizontally) පමණක් ස්ක්‍රෝල් වීමට */
         .table-responsive { 
-            flex: 1; /* ඉතිරි වී ඇති සම්පූර්ණ ඉඩ වගුවට ලබා දෙයි */
-            overflow-y: auto; /* සිරස් අතට ස්ක්‍රෝල් වේ */
-            overflow-x: auto; /* හරස් අතට ස්ක්‍රෝල් වේ */
+            width: 100%;
+            overflow-x: auto; 
             border: 1px solid #aaaaaa;
             background: white;
+            -webkit-overflow-scrolling: touch;
         }
         
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
-        th, td { border: 1px solid #aaaaaa; padding: 8px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; table-layout: fixed; }
+        th, td { border: 1px solid #aaaaaa; padding: 8px; text-align: center; white-space: nowrap; box-sizing: border-box; }
         
-        /* 📌 ඇප් එක ඇතුළේ Headers ටික නූලටම එක තැනක Sticky කරවන කෝඩ් එක */
-        th { 
-            background-color: #28a745; 
-            color: white; 
-            font-weight: bold; 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; /* හැමදේටම උඩින් පෙනීමට */
+        /* වගුවේ තීරු වල පළල ස්ථාවරව තබා ගැනීම */
+        .col-date { width: 50px; }
+        .col-var { width: 120px; }
+        .col-num { width: 65px; }
+        .col-rem { width: 150px; }
+
+        /* 📌 ස්ථාවර Header එක ඇතුළේ තියෙන Table Header එකට (කොළ පාට තීරුවට) අදාළ CSS */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #28a745;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+        }
+        .header-table th {
+            background-color: #28a745;
+            padding: 10px 8px;
+            border: 1px solid #aaaaaa;
         }
         
-        /* දිනය තියෙන කොටුව (Rowspan වෙන කොටුව) ස්ක්‍රෝල් වෙද්දී මැකී නොයන්න */
+        /* දිනය පෙන්වන කොටුව වමට ස්ක්‍රෝල් වෙද්දී මැකී නොයන්න */
         td[rowspan] {
             position: sticky;
             left: 0;
             background-color: #ffffff !important;
             z-index: 5;
+            font-weight: bold;
         }
         
         .filled-row { background-color: #e8f5e9; font-weight: bold; color: #1b5e20; }
@@ -75,7 +97,7 @@
 </head>
 <body>
 
-<div class="container">
+<div class="fixed-complete-header">
     <div class="nav-links">
         <a href="index.html">📥 Data Entry Form</a>
         <a href="operator1.html" class="active">📊 View Monthly Books</a>
@@ -101,20 +123,29 @@
         </div>
     </div>
 
+    <table class="header-table">
+        <thead>
+            <tr>
+                <th class="col-date">Date</th>
+                <th class="col-var">Variety</th>
+                <th class="col-num">WK</th>
+                <th class="col-num">Transfer</th>
+                <th class="col-num">Used</th>
+                <th class="col-num">Multy</th>
+                <th class="col-num">Rooting</th>
+                <th class="col-rem">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<div class="container">
     <div class="table-responsive">
         <table>
-            <thead>
-                <tr>
-                    <th style="width: 60px;">Date</th>
-                    <th>Variety</th>
-                    <th>WK</th>
-                    <th>Transfer</th>
-                    <th>Used</th>
-                    <th>Multy</th>
-                    <th>Rooting</th>
-                    <th>Remarks</th>
-                </tr>
-            </thead>
+            <colgroup>
+                <col class="col-date"><col class="col-var"><col class="col-num"><col class="col-num">
+                <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-rem">
+            </colgroup>
             <tbody id="productionTableBody"></tbody>
         </table>
     </div>
@@ -134,7 +165,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Firebase Offline Persistence (ඇප් එක ඇතුළේ ඩේටා බ්ලොක් නොවී වේගයෙන් ලෝඩ් වෙන්න)
     firebase.firestore().enablePersistence().catch(function(err) { console.log(err.code); });
 
     const today = new Date();
@@ -146,7 +176,7 @@
 
     function renderMonthlySheet() {
         const tableBody = document.getElementById('productionTableBody');
-        tableBody.innerHTML = `<tr><td colspan="8" style="color:blue; font-weight:bold; padding:20px;">Loading Book Data... Please Wait...</td></tr>`; 
+        tableBody.innerHTML = `<tr><td colspan="8" style="color:blue; font-weight:bold; padding:20px; text-align:center;">Loading Book Data... Please Wait...</td></tr>`; 
 
         const selectedMonth = document.getElementById('monthFilter').value; 
         const selectedOperator = document.getElementById('operatorFilter').value; 
@@ -193,7 +223,7 @@
                             <td>${record.used || '0'}</td>
                             <td>${record.multy || '0'}</td>
                             <td>${record.rooting || '0'}</td>
-                            <td style="text-align:left;">${record.remarks ? record.remarks : '-'}</td>
+                            <td style="text-align:left; white-space: normal; word-break: break-word;">${record.remarks ? record.remarks : '-'}</td>
                         </tr>`;
                         tableBody.innerHTML += row;
                     });
@@ -213,7 +243,7 @@
             }
         })
         .catch((error) => {
-            tableBody.innerHTML = `<tr><td colspan="8" style="color: red;">Error loading data: ${error.message}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="8" style="color: red; text-align:center;">Error loading data: ${error.message}</td></tr>`;
         });
     }
 </script>
