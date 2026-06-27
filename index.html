@@ -9,7 +9,7 @@
         .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; list-style: none; padding: 0; }
         .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
         .nav-links a.active { background: #00875a; }
-        .container { max-width: 950px; margin: auto; background: white; padding: 0 0 30px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border-top: 6px solid #00875a; }
+        .container { max-width: 1050px; margin: auto; background: white; padding: 0 0 30px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border-top: 6px solid #00875a; }
         .form-header { text-align: center; padding: 20px 10px 5px 10px; }
         .form-header h2 { margin: 0; color: #2c3e50; font-size: 26px; font-weight: bold; }
         .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 14px; }
@@ -17,8 +17,8 @@
         .form-body { padding: 0 30px; }
         label { font-weight: bold; display: block; margin-top: 15px; color: #2c3e50; font-size: 14px; }
         input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        .data-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 8px; align-items: center; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
-        .row-headers { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 8px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 10px; }
+        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1.5fr auto; gap: 8px; align-items: center; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
+        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1.5fr auto; gap: 8px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 10px; }
         .btn-add-row { background-color: #00875a; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
         .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-submit { width: 100%; padding: 14px; background-color: #2575fc; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
@@ -28,8 +28,8 @@
 <body>
 
 <div class="nav-links">
-    <a href="index.html" class="active">📝 Data Entry Form</a>
-    <a href="operator1.html">📊 View Monthly Books</a>
+    <a href="index.html" class="active">Data Entry Form</a>
+    <a href="operator1.html">View Monthly Books</a>
 </div>
 
 <div class="container">
@@ -52,10 +52,11 @@
             </div>
             <div style="margin-top: 25px;">
                 <div class="row-headers">
-                    <div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div><div>Multy</div><div>Rooting</div><div>Remarks</div><div>Action</div>
+                    <div>Plant Code</div><div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div><div>Multy</div><div>Rooting</div><div>Remarks</div><div>Action</div>
                 </div>
                 <div id="dynamicRowsContainer">
                     <div class="data-row">
+                        <input type="text" class="field-plantcode" placeholder="e.g. TC-BAN-01" required>
                         <input type="text" class="field-variety" placeholder="Variety" required>
                         <input type="number" class="field-wk" placeholder="WK" required>
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
@@ -71,7 +72,7 @@
             <button type="submit" class="btn-submit" id="btnSubmit">SUBMIT PRODUCTION DATA</button>
         </form>
     </div>
-    <div id="successMessage" class="success-box">🎉 Thank You!<br><span style="font-size: 14px; font-weight: normal;">Your Production Data Has Been Submitted Successfully.</span></div>
+    <div id="successMessage" class="success-box">Thank You!<br><span style="font-size: 14px; font-weight: normal;">Your Production Data Has Been Submitted Successfully.</span></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -92,6 +93,7 @@
         const newRow = document.createElement('div');
         newRow.className = 'data-row';
         newRow.innerHTML = `
+            <input type="text" class="field-plantcode" placeholder="e.g. TC-BAN-01" required>
             <input type="text" class="field-variety" placeholder="Variety" required>
             <input type="number" class="field-wk" placeholder="WK" required>
             <input type="number" class="field-transfer" placeholder="Transfer" required>
@@ -125,14 +127,13 @@
         btnSubmit.innerText = "CHECKING VALIDATION...";
 
         try {
-            // 🔍 1. Check if already submitted today
             const querySnapshot = await db.collection("Production_Records")
                 .where("operator", "==", selectedOperator)
                 .where("date", "==", todayStr)
                 .get();
 
             if (!querySnapshot.empty) {
-                alert(`⚠️ Already Submitted Today!\n${selectedOperator} has already entered data for ${todayStr}.`);
+                alert(`Already Submitted Today!\n${selectedOperator} has already entered data for ${todayStr}.`);
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
                 return;
@@ -149,12 +150,13 @@
                     date: todayStr,
                     time: currentTimeStr,
                     operator: selectedOperator,
+                    plantCode: row.querySelector('.field-plantcode').value,
                     variety: row.querySelector('.field-variety').value,
-                    wk: row.querySelector('.field-wk').value,
-                    transfer: row.querySelector('.field-transfer').value,
-                    used: row.querySelector('.field-used').value,
-                    multy: row.querySelector('.field-multy').value,
-                    rooting: row.querySelector('.field-rooting').value,
+                    wk: parseInt(row.querySelector('.field-wk').value),
+                    transfer: parseInt(row.querySelector('.field-transfer').value),
+                    used: parseInt(row.querySelector('.field-used').value),
+                    multy: parseInt(row.querySelector('.field-multy').value),
+                    rooting: parseInt(row.querySelector('.field-rooting').value),
                     remarks: row.querySelector('.field-remarks').value || '-'
                 });
             }
@@ -167,6 +169,7 @@
                 form.reset();
                 document.getElementById('dynamicRowsContainer').innerHTML = `
                     <div class="data-row">
+                        <input type="text" class="field-plantcode" placeholder="e.g. TC-BAN-01" required>
                         <input type="text" class="field-variety" placeholder="Variety" required>
                         <input type="number" class="field-wk" placeholder="WK" required>
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
