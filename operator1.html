@@ -22,7 +22,7 @@
         th, td { border: 1px solid #aaaaaa; padding: 8px; text-align: center; white-space: nowrap; box-sizing: border-box; }
         .col-date { width: 50px; }
         .col-code { width: 90px; }
-        .col-var { width: 120px; }
+        .col-var { width: 150px; }
         .col-num { width: 65px; }
         .col-rem { width: 150px; }
         .header-table { width: 100%; border-collapse: collapse; background: #28a745; color: white; font-weight: bold; box-shadow: 0px 2px 5px rgba(0,0,0,0.1); }
@@ -154,9 +154,10 @@
                             row += `<td rowspan="${recordsArray.length}" style="vertical-align: middle; color: #333;"><b>${dayNumber}</b></td>`;
                         }
                         
+                        // 💡 ඩේටාබේස් එකේ තියෙන plantCode සහ variety එක ලස්සනට ටේබල් එකේ පෙන්වීම
                         row += `
                             <td>${record.plantCode || '-'}</td>
-                            <td>${record.variety || '-'}</td>
+                            <td style="text-align:left; white-space: normal; word-break: break-word;">${record.variety || '-'}</td>
                             <td>${record.wk || '0'}</td>
                             <td>${record.transfer || '0'}</td>
                             <td>${record.used || '0'}</td>
