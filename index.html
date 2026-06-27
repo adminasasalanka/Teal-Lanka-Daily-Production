@@ -23,6 +23,7 @@
         .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-submit { width: 100%; padding: 14px; background-color: #2575fc; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
         .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 30px 0 30px; font-weight: bold; border: 2px solid #c3e6cb; }
+        .field-variety { background-color: #e9ecef; color: #495057; cursor: not-allowed; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -56,8 +57,8 @@
                 </div>
                 <div id="dynamicRowsContainer">
                     <div class="data-row">
-                        <input type="text" class="field-plantcode" placeholder="01" required>
-                        <input type="text" class="field-variety" placeholder="Variety" required>
+                        <input type="text" class="field-plantcode" placeholder="e.g. 1" required oninput="fetchVariety(this)">
+                        <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
                         <input type="number" class="field-wk" placeholder="WK" required>
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
                         <input type="number" class="field-used" placeholder="Used" required>
@@ -89,12 +90,39 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // 💡 Plant Code එකෙන් Variety එක Auto-fill කරන Function එක
+    window.fetchVariety = async function(inputElement) {
+        const plantCode = inputElement.value.trim().toUpperCase();
+        const row = inputElement.parentElement;
+        const varietyInput = row.querySelector('.field-variety');
+
+        if (plantCode === "") {
+            varietyInput.value = "";
+            return;
+        }
+
+        try {
+            const docRef = db.collection("Plants").doc(plantCode);
+            const docSnap = await docRef.get();
+
+            if (docSnap.exists) {
+                varietyInput.value = docSnap.data().varietyName;
+                varietyInput.style.borderColor = "#00875a";
+            } else {
+                varietyInput.value = "Unknown Code ❌";
+                varietyInput.style.borderColor = "#d9534f";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
     document.getElementById('btnAddRow').addEventListener('click', () => {
         const newRow = document.createElement('div');
         newRow.className = 'data-row';
         newRow.innerHTML = `
-            <input type="text" class="field-plantcode" placeholder="01" required>
-            <input type="text" class="field-variety" placeholder="Variety" required>
+            <input type="text" class="field-plantcode" placeholder="e.g. 1" required oninput="fetchVariety(this)">
+            <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
             <input type="number" class="field-wk" placeholder="WK" required>
             <input type="number" class="field-transfer" placeholder="Transfer" required>
             <input type="number" class="field-used" placeholder="Used" required>
@@ -123,6 +151,16 @@
         const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
         const currentTimeStr = new Date().toTimeString().split(' ')[0];
 
+        // වැරදි Code තිබේ නම් Submit කිරීම වැලැක්වීම
+        const allDataRows = document.getElementById('dynamicRowsContainer').getElementsByClassName('data-row');
+        for (let row of allDataRows) {
+            const varVal = row.querySelector('.field-variety').value;
+            if (varVal === "" || varVal.includes("Unknown Code")) {
+                alert("Please enter valid Plant Codes before submitting!");
+                return;
+            }
+        }
+
         btnSubmit.disabled = true;
         btnSubmit.innerText = "CHECKING VALIDATION...";
 
@@ -141,7 +179,6 @@
 
             btnSubmit.innerText = "SAVING DATA...";
             const batch = db.batch();
-            const allDataRows = document.getElementById('dynamicRowsContainer').getElementsByClassName('data-row');
 
             for (let row of allDataRows) {
                 const docRef = db.collection("Production_Records").doc();
@@ -150,7 +187,7 @@
                     date: todayStr,
                     time: currentTimeStr,
                     operator: selectedOperator,
-                    plantCode: row.querySelector('.field-plantcode').value,
+                    plantCode: row.querySelector('.field-plantcode').value.trim().toUpperCase(),
                     variety: row.querySelector('.field-variety').value,
                     wk: parseInt(row.querySelector('.field-wk').value),
                     transfer: parseInt(row.querySelector('.field-transfer').value),
@@ -169,8 +206,8 @@
                 form.reset();
                 document.getElementById('dynamicRowsContainer').innerHTML = `
                     <div class="data-row">
-                        <input type="text" class="field-plantcode" placeholder="e.g. TC-BAN-01" required>
-                        <input type="text" class="field-variety" placeholder="Variety" required>
+                        <input type="text" class="field-plantcode" placeholder="e.g. 1" required oninput="fetchVariety(this)">
+                        <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
                         <input type="number" class="field-wk" placeholder="WK" required>
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
                         <input type="number" class="field-used" placeholder="Used" required>
