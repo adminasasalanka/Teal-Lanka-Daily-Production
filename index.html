@@ -9,7 +9,7 @@
         .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; list-style: none; padding: 0; }
         .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
         .nav-links a.active { background: #00875a; }
-        .container { max-width: 1250px; margin: auto; background: white; padding: 0 0 30px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border-top: 6px solid #00875a; }
+        .container { max-width: 1350px; margin: auto; background: white; padding: 0 0 30px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border-top: 6px solid #00875a; }
         .form-header { text-align: center; padding: 20px 10px 5px 10px; }
         .form-header h2 { margin: 0; color: #2c3e50; font-size: 26px; font-weight: bold; }
         .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 14px; }
@@ -18,19 +18,20 @@
         label { font-weight: bold; display: block; margin-top: 15px; color: #2c3e50; font-size: 14px; }
         input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         
-        /* ස්ථාවර Flexible Layout එකක් - Banana දැම්මත් තීරු ප්‍රමාණය වෙනස් නොවේ */
-        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1fr 1fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 10px; padding: 12px 8px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
-        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1fr 1fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 8px; text-align: center; }
+        /* Standard Layout for Ornamental: Columns are explicitly defined */
+        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 8px; align-items: center; margin-bottom: 10px; padding: 12px 8px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
+        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 8px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 8px; text-align: center; }
         
-        /* Banana සඳහා වෙනස්ම Grid Layout එකක් - ඉඩ ප්‍රමාණය හරියටම බෙදී යයි */
-        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 3fr 3fr 1.5fr auto; }
-        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 3fr 3fr 1.5fr auto; }
+        /* Banana Layout: 4 columns removed entirely from layout grid */
+        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 2.4fr 1.5fr auto; }
+        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 2.4fr 1.5fr auto; }
 
         .hide-banana-box { display: block; }
+        /* When Banana is detected, fully remove the boxes from being rendered */
         .is-banana .hide-banana-box { display: none !important; }
 
         .btn-add-row { background-color: #00875a; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
-        .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
         .btn-submit { width: 100%; padding: 14px; background-color: #2575fc; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
         .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 30px 0 30px; font-weight: bold; border: 2px solid #c3e6cb; }
         .field-variety { background-color: #e9ecef; color: #495057; cursor: not-allowed; font-weight: bold; }
@@ -115,7 +116,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Banana ද නැද්ද යන්න මත පෙට්ටි සම්පූර්ණයෙන්ම Hide කර Grid එක සමබර කරන ශ්‍රිතය
     window.fetchVariety = async function(inputElement) {
         const plantCode = inputElement.value.trim().toUpperCase();
         const row = inputElement.parentElement;
@@ -169,7 +169,6 @@
         }
     }
 
-    // පළමු පේළියේ ස්වභාවය අනුව Headers මාරු කිරීම
     function checkHeaderState() {
         const firstRow = document.querySelector('#dynamicRowsContainer .data-row');
         const header = document.getElementById('headerRow');
@@ -199,6 +198,13 @@
             <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
         `;
         document.getElementById('dynamicRowsContainer').appendChild(newRow);
+        
+        // අලුතින් පේළියක් එකතු කරද්දී දැනට පළමු පේළියේ පවතින ස්වභාවයම (Banana/Ornamental) ඒකටත් ස්වයංක්‍රීයව ලැබීමට සැලැස්වීම
+        const firstRow = document.querySelector('#dynamicRowsContainer .data-row');
+        if (firstRow && firstRow.querySelector('.field-plantcode').value.toUpperCase().startsWith('B')) {
+            newRow.querySelector('.field-plantcode').value = firstRow.querySelector('.field-plantcode').value;
+            fetchVariety(newRow.querySelector('.field-plantcode'));
+        }
         checkHeaderState();
     });
 
