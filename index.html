@@ -62,8 +62,8 @@
                         <input type="number" class="field-wk" placeholder="WK" required>
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
                         <input type="number" class="field-used" placeholder="Used" required>
-                        <input type="number" class="field-multy" placeholder="Multy" required>
-                        <input type="number" class="field-rooting" placeholder="Rooting" required>
+                        <input type="text" class="field-multy" placeholder="Multy" required>
+                        <input type="text" class="field-rooting" placeholder="Rooting" required>
                         <input type="text" class="field-remarks" placeholder="Remarks">
                         <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
                     </div>
@@ -90,15 +90,28 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // 💡 Plant Code එකෙන් Variety එක Auto-fill කරන Function එක
+    // Dynamic ලෙස Placeholders වෙනස් කරන Function එක
     window.fetchVariety = async function(inputElement) {
         const plantCode = inputElement.value.trim().toUpperCase();
         const row = inputElement.parentElement;
         const varietyInput = row.querySelector('.field-variety');
+        const multyInput = row.querySelector('.field-multy');
+        const rootingInput = row.querySelector('.field-rooting');
 
         if (plantCode === "") {
             varietyInput.value = "";
+            multyInput.placeholder = "Multy";
+            rootingInput.placeholder = "Rooting";
             return;
+        }
+
+        // Banana ද නැද්ද යන්න පරික්ෂාව
+        if (plantCode.startsWith('B')) {
+            multyInput.placeholder = "Qty (x10)";
+            rootingInput.placeholder = "Qty (x10)";
+        } else {
+            multyInput.placeholder = "Pala*Bag";
+            rootingInput.placeholder = "Pala*Bag";
         }
 
         try {
@@ -117,6 +130,19 @@
         }
     }
 
+    // Input එකේ ඇති අගය (ගුණ කිරීම් සහිතව හෝ රහිතව) සුළු කර දෙන සහයක ශ්‍රිතය
+    function parseProductionValue(valStr, isBanana) {
+        valStr = valStr.trim();
+        if (valStr.includes('*')) {
+            const parts = valStr.split('*');
+            const p1 = parseFloat(parts[0]) || 0;
+            const p2 = parseFloat(parts[1]) || 0;
+            return Math.round(p1 * p2);
+        }
+        const num = parseFloat(valStr) || 0;
+        return isBanana ? Math.round(num * 10) : Math.round(num);
+    }
+
     document.getElementById('btnAddRow').addEventListener('click', () => {
         const newRow = document.createElement('div');
         newRow.className = 'data-row';
@@ -126,8 +152,8 @@
             <input type="number" class="field-wk" placeholder="WK" required>
             <input type="number" class="field-transfer" placeholder="Transfer" required>
             <input type="number" class="field-used" placeholder="Used" required>
-            <input type="number" class="field-multy" placeholder="Multy" required>
-            <input type="number" class="field-rooting" placeholder="Rooting" required>
+            <input type="text" class="field-multy" placeholder="Multy" required>
+            <input type="text" class="field-rooting" placeholder="Rooting" required>
             <input type="text" class="field-remarks" placeholder="Remarks">
             <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
         `;
@@ -151,7 +177,6 @@
         const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
         const currentTimeStr = new Date().toTimeString().split(' ')[0];
 
-        // වැරදි Code තිබේ නම් Submit කිරීම වැලැක්වීම
         const allDataRows = document.getElementById('dynamicRowsContainer').getElementsByClassName('data-row');
         for (let row of allDataRows) {
             const varVal = row.querySelector('.field-variety').value;
@@ -182,18 +207,24 @@
 
             for (let row of allDataRows) {
                 const docRef = db.collection("Production_Records").doc();
+                const pCode = row.querySelector('.field-plantcode').value.trim().toUpperCase();
+                const isBanana = pCode.startsWith('B');
+
+                const rawMulty = row.querySelector('.field-multy').value;
+                const rawRooting = row.querySelector('.field-rooting').value;
+
                 batch.set(docRef, {
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     date: todayStr,
                     time: currentTimeStr,
                     operator: selectedOperator,
-                    plantCode: row.querySelector('.field-plantcode').value.trim().toUpperCase(),
+                    plantCode: pCode,
                     variety: row.querySelector('.field-variety').value,
                     wk: parseInt(row.querySelector('.field-wk').value),
                     transfer: parseInt(row.querySelector('.field-transfer').value),
                     used: parseInt(row.querySelector('.field-used').value),
-                    multy: parseInt(row.querySelector('.field-multy').value),
-                    rooting: parseInt(row.querySelector('.field-rooting').value),
+                    multy: parseProductionValue(rawMulty, isBanana),
+                    rooting: parseProductionValue(rawRooting, isBanana),
                     remarks: row.querySelector('.field-remarks').value || '-'
                 });
             }
@@ -211,8 +242,8 @@
                         <input type="number" class="field-wk" placeholder="WK" required>
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
                         <input type="number" class="field-used" placeholder="Used" required>
-                        <input type="number" class="field-multy" placeholder="Multy" required>
-                        <input type="number" class="field-rooting" placeholder="Rooting" required>
+                        <input type="text" class="field-multy" placeholder="Multy" required>
+                        <input type="text" class="field-rooting" placeholder="Rooting" required>
                         <input type="text" class="field-remarks" placeholder="Remarks">
                         <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
                     </div>
