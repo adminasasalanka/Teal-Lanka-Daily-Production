@@ -19,15 +19,15 @@
         input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         
         /* Dynamic Grid Layout */
-        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 0.8fr 0.8fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 10px; padding: 12px 8px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
-        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 0.8fr 0.8fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 12px; color: #2c3e50; margin-bottom: 5px; padding: 0 8px; text-align: center; }
+        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 10px; padding: 12px 8px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
+        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 12px; color: #2c3e50; margin-bottom: 5px; padding: 0 8px; text-align: center; }
         
-        /* Banana වෙනුවෙන් Layout එක වෙනස් කරන ආකාරය */
-        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.6fr 0fr 1.6fr 0fr 1.5fr auto; }
-        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.6fr 0fr 1.6fr 0fr 1.5fr auto; }
+        /* Banana සඳහා පෙට්ටි නැති කර Grid එක වෙනස් කරන ආකාරය */
+        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 0fr 0fr 2.4fr 0fr 0fr 1.5fr auto; }
+        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 0fr 0fr 2.4fr 0fr 0fr 1.5fr auto; }
 
         .hide-banana-box { display: block; }
-        .is-banana .hide-banana-box { display: none; }
+        .is-banana .hide-banana-box { display: none !important; }
 
         .btn-add-row { background-color: #00875a; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
         .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
@@ -63,11 +63,11 @@
             </div>
             
             <div style="margin-top: 25px; overflow-x: auto;">
-                <!-- headers -->
+                <!-- Table Headers -->
                 <div id="headerRow" class="row-headers">
                     <div>Plant Code</div><div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div>
-                    <div>Multy</div><div class="hide-banana-box">Plants</div>
-                    <div>Rooting</div><div class="hide-banana-box">Plants</div>
+                    <div>Multy</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
+                    <div>Rooting</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
                     <div>Remarks</div><div>Action</div>
                 </div>
                 
@@ -79,12 +79,14 @@
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
                         <input type="number" class="field-used" placeholder="Used" required>
                         
-                        <!-- Multy Column Pair -->
+                        <!-- Multy Group -->
                         <input type="number" class="field-multy" placeholder="Multy" required>
+                        <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
                         <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
                         
-                        <!-- Rooting Column Pair -->
+                        <!-- Rooting Group -->
                         <input type="number" class="field-rooting" placeholder="Rooting" required>
+                        <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
                         <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
                         
                         <input type="text" class="field-remarks" placeholder="Remarks">
@@ -113,38 +115,38 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Banana ද නැද්ද යන්න මත පෙට්ටි Hide/Show කරන ශ්‍රිතය
+    // Banana ද නැද්ද යන්න මත පෙට්ටි සම්පූර්ණයෙන්ම Hide/Show කරන ශ්‍රිතය
     window.fetchVariety = async function(inputElement) {
         const plantCode = inputElement.value.trim().toUpperCase();
         const row = inputElement.parentElement;
         const varietyInput = row.querySelector('.field-variety');
         
+        const mBottles = row.querySelector('.field-multy-bottles');
         const mPlants = row.querySelector('.field-multy-plants');
+        const rBottles = row.querySelector('.field-rooting-bottles');
         const rPlants = row.querySelector('.field-rooting-plants');
+        
         const mMain = row.querySelector('.field-multy');
         const rMain = row.querySelector('.field-rooting');
 
         if (plantCode === "") {
             varietyInput.value = "";
             row.classList.remove('is-banana');
-            mPlants.required = true;
-            rPlants.required = true;
-            mMain.placeholder = "Multy";
-            rMain.placeholder = "Rooting";
+            mBottles.required = mPlants.required = rBottles.required = rPlants.required = true;
+            mMain.placeholder = "Multy"; rMain.placeholder = "Rooting";
             checkHeaderState();
             return;
         }
 
         if (plantCode.startsWith('B')) {
             row.classList.add('is-banana');
-            mPlants.required = false; mPlants.value = "";
-            rPlants.required = false; rPlants.value = "";
+            mBottles.required = mPlants.required = rBottles.required = rPlants.required = false;
+            mBottles.value = mPlants.value = rBottles.value = rPlants.value = "";
             mMain.placeholder = "Qty (x10)";
             rMain.placeholder = "Qty (x10)";
         } else {
             row.classList.remove('is-banana');
-            mPlants.required = true;
-            rPlants.required = true;
+            mBottles.required = mPlants.required = rBottles.required = rPlants.required = true;
             mMain.placeholder = "Multy";
             rMain.placeholder = "Rooting";
         }
@@ -167,7 +169,6 @@
         }
     }
 
-    // පළමු පේළියේ ඇති Code එක අනුව උඩ මාතෘකා තීරුවද වෙනස් කිරීම
     function checkHeaderState() {
         const firstRow = document.querySelector('#dynamicRowsContainer .data-row');
         const header = document.getElementById('headerRow');
@@ -188,8 +189,10 @@
             <input type="number" class="field-transfer" placeholder="Transfer" required>
             <input type="number" class="field-used" placeholder="Used" required>
             <input type="number" class="field-multy" placeholder="Multy" required>
+            <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
             <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
             <input type="number" class="field-rooting" placeholder="Rooting" required>
+            <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
             <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
             <input type="text" class="field-remarks" placeholder="Remarks">
             <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
@@ -253,12 +256,16 @@
                 const isBanana = pCode.startsWith('B');
 
                 const mM = parseFloat(row.querySelector('.field-multy').value) || 0;
+                const mB = parseFloat(row.querySelector('.field-multy-bottles').value) || 1;
                 const mP = parseFloat(row.querySelector('.field-multy-plants').value) || 1;
+                
                 const rM = parseFloat(row.querySelector('.field-rooting').value) || 0;
+                const rB = parseFloat(row.querySelector('.field-rooting-bottles').value) || 1;
                 const rP = parseFloat(row.querySelector('.field-rooting-plants').value) || 1;
 
-                let finalMulty = isBanana ? (mM * 10) : (mM * mP);
-                let finalRooting = isBanana ? (rM * 10) : (rM * rP);
+                // Logic: Ornamental නම් Multy * Bottles * Plants | Banana නම් Multy * 10
+                let finalMulty = isBanana ? (mM * 10) : (mM * mB * mP);
+                let finalRooting = isBanana ? (rM * 10) : (rM * rB * rP);
 
                 batch.set(docRef, {
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -290,8 +297,10 @@
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
                         <input type="number" class="field-used" placeholder="Used" required>
                         <input type="number" class="field-multy" placeholder="Multy" required>
+                        <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
                         <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
                         <input type="number" class="field-rooting" placeholder="Rooting" required>
+                        <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
                         <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
                         <input type="text" class="field-remarks" placeholder="Remarks">
                         <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
