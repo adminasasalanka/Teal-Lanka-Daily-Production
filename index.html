@@ -18,13 +18,13 @@
         label { font-weight: bold; display: block; margin-top: 15px; color: #2c3e50; font-size: 14px; }
         input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         
-        /* Dynamic Grid Layout */
-        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 10px; padding: 12px 8px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
-        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 12px; color: #2c3e50; margin-bottom: 5px; padding: 0 8px; text-align: center; }
+        /* ස්ථාවර Flexible Layout එකක් - Banana දැම්මත් තීරු ප්‍රමාණය වෙනස් නොවේ */
+        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1fr 1fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 10px; padding: 12px 8px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
+        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1fr 1fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 8px; text-align: center; }
         
-        /* Banana සඳහා පෙට්ටි නැති කර Grid එක වෙනස් කරන ආකාරය */
-        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 0fr 0fr 2.4fr 0fr 0fr 1.5fr auto; }
-        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 0fr 0fr 2.4fr 0fr 0fr 1.5fr auto; }
+        /* Banana සඳහා වෙනස්ම Grid Layout එකක් - ඉඩ ප්‍රමාණය හරියටම බෙදී යයි */
+        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 3fr 3fr 1.5fr auto; }
+        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 3fr 3fr 1.5fr auto; }
 
         .hide-banana-box { display: block; }
         .is-banana .hide-banana-box { display: none !important; }
@@ -115,7 +115,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Banana ද නැද්ද යන්න මත පෙට්ටි සම්පූර්ණයෙන්ම Hide/Show කරන ශ්‍රිතය
+    // Banana ද නැද්ද යන්න මත පෙට්ටි සම්පූර්ණයෙන්ම Hide කර Grid එක සමබර කරන ශ්‍රිතය
     window.fetchVariety = async function(inputElement) {
         const plantCode = inputElement.value.trim().toUpperCase();
         const row = inputElement.parentElement;
@@ -169,6 +169,7 @@
         }
     }
 
+    // පළමු පේළියේ ස්වභාවය අනුව Headers මාරු කිරීම
     function checkHeaderState() {
         const firstRow = document.querySelector('#dynamicRowsContainer .data-row');
         const header = document.getElementById('headerRow');
@@ -263,7 +264,6 @@
                 const rB = parseFloat(row.querySelector('.field-rooting-bottles').value) || 1;
                 const rP = parseFloat(row.querySelector('.field-rooting-plants').value) || 1;
 
-                // Logic: Ornamental නම් Multy * Bottles * Plants | Banana නම් Multy * 10
                 let finalMulty = isBanana ? (mM * 10) : (mM * mB * mP);
                 let finalRooting = isBanana ? (rM * 10) : (rM * rB * rP);
 
