@@ -15,10 +15,23 @@
             -moz-user-select: none;    /* Firefox */
             -ms-user-select: none;     /* IE10+ */
             user-select: none;         /* Standard */
-            transition: filter 0.2s ease;
         }
         
-        /* Security Fix: Hide content when someone tries to Print or Screenshot via print shortcut */
+        /* Security Blackout Overlay */
+        #securityOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000;
+            z-index: 999999;
+            color: white;
+            text-align: center;
+            padding-top: 50vh;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
         @media print {
             body { display: none !important; }
         }
@@ -35,11 +48,9 @@
         label { font-weight: bold; display: block; margin-top: 15px; color: #2c3e50; font-size: 14px; }
         input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         
-        /* Standard Layout for Ornamental */
         .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 8px; align-items: center; margin-bottom: 10px; padding: 12px 8px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
         .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 8px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 8px; text-align: center; }
         
-        /* Banana Layout */
         .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 2.4fr 1.5fr auto; }
         .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 2.4fr 1.5fr auto; }
 
@@ -54,6 +65,9 @@
     </style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
+
+<!-- Security Screen Overlay -->
+<div id="securityOverlay">🔒 Screen Capture Restricted!</div>
 
 <div class="nav-links">
     <a href="index.html" class="active">Data Entry Form</a>
@@ -80,7 +94,6 @@
             </div>
             
             <div style="margin-top: 25px; overflow-x: auto;">
-                <!-- Table Headers -->
                 <div id="headerRow" class="row-headers">
                     <div>Plant Code</div><div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div>
                     <div>Multy</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
@@ -96,12 +109,10 @@
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
                         <input type="number" class="field-used" placeholder="Used" required>
                         
-                        <!-- Multy Group -->
                         <input type="number" class="field-multy" placeholder="Multy" required>
                         <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
                         <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
                         
-                        <!-- Rooting Group -->
                         <input type="number" class="field-rooting" placeholder="Rooting" required>
                         <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
                         <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
@@ -121,31 +132,33 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
-    // Security Function
+    // Robust WebIntoApp Security Controls
+    const overlay = document.getElementById('securityOverlay');
+
+    function triggerBlackout() {
+        overlay.style.display = 'block';
+        setTimeout(() => { overlay.style.display = 'none'; }, 1500); // 1.5 seconds blackout
+    }
+
+    // Heavy restriction on visibility change (Triggers when screenshot UI overlays or app loses active focus)
+    document.addEventListener('visibilitychange', () => { if (document.hidden) triggerBlackout(); });
+    window.addEventListener('blur', triggerBlackout);
+    window.addEventListener('pagehide', triggerBlackout);
+
     function disableSecurityKeys(e) {
-        if (e.keyCode == 44 || 
-            (e.metaKey && e.shiftKey && (e.keyCode == 52 || e.keyCode == 51)) || 
-            (e.ctrlKey && e.shiftKey && e.keyCode == 83)) {
+        if (e.keyCode == 44 || (e.metaKey && e.shiftKey && (e.keyCode == 52 || e.keyCode == 51)) || (e.ctrlKey && e.shiftKey && e.keyCode == 83)) {
             e.preventDefault();
-            alert("🔒 Security Notice: You can't take screenshots or copy data from this app!");
+            triggerBlackout();
             return false;
         }
-
-        if (e.keyCode == 123 || 
-            (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || 
-            (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 67 || e.keyCode == 83 || e.keyCode == 80))) {
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 67 || e.keyCode == 83 || e.keyCode == 80))) {
             e.preventDefault();
-            alert("🔒 Security Notice: Copying or inspecting data is restricted!");
             return false;
         }
     }
     
-    // Blur on switch tab / screenshot preparation
-    window.addEventListener('blur', () => { document.body.style.filter = "blur(20px)"; });
-    window.addEventListener('focus', () => { document.body.style.filter = "none"; });
-
     document.addEventListener('copy', (e) => {
-        e.clipboardData.setData('text/plain', 'Copying not allowed!');
+        e.clipboardData.setData('text/plain', 'Not Allowed');
         e.preventDefault();
     });
 
