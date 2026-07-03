@@ -133,6 +133,7 @@
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
 
+<!-- Login Modal -->
 <div id="appLoginModal">
     <div class="modal-box">
         <h3>Teal Lanka Login</h3>
@@ -146,7 +147,8 @@
             <option value="Operator 4">Operator QST</option>
         </select>
         
-        <input type="text" id="loginPin" placeholder="Enter Secret PIN" autocomplete="off">
+        <!-- 💡 inputmode="text" සහ pattern=".*" මඟින් 100% ක්ම අකුරු සහිත QWERTY Keyboard එක බලෙන්ම මතු කරයි -->
+        <input type="text" id="loginPin" placeholder="Enter Secret PIN" autocomplete="off" inputmode="text" pattern=".*">
         <button type="button" onclick="initializeAppSession()">Login & Open App</button>
         <div id="loginErrorAlert" class="error-text">Incorrect PIN. Access Denied!</div>
     </div>
@@ -254,7 +256,6 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // 💡 මෙතන තියෙන්නේ ඔයාගේ Operators ලගේ PIN ටිකයි. ඔයාට අවශ්‍ය පරිදි වෙනස් කරගන්න.
     const operatorPins = {
         "Operator 1": "17Ec9F9F@1",
         "Operator 2": "17Ec9F9F@2",
@@ -262,7 +263,6 @@
         "Operator 4": "17Ec9F9F@4" 
     };
 
-    // Dashboard සහ Books අතර මාරු වෙද්දී ආයෙත් PIN ඉල්ලීම වැළැක්වීමට Session Check එක
     document.addEventListener("DOMContentLoaded", () => {
         const savedOperator = sessionStorage.getItem("activeOperator");
         const savedOpText = sessionStorage.getItem("activeOperatorText");
@@ -291,13 +291,11 @@
             return;
         }
 
-        // .toUpperCase() මඟින් Simple/Capital ඕනෑම එකකින් ගැහුවත් Login වීමට ඉඩ සලසයි
         if (enteredPin.toUpperCase() === operatorPins[selectedOp].toUpperCase()) {
             auth.signInAnonymously()
                 .then(() => {
                     const opText = selectElement.options[selectElement.selectedIndex].text;
                     
-                    // Session එක මතක තබා ගැනීම
                     sessionStorage.setItem("activeOperator", selectedOp);
                     sessionStorage.setItem("activeOperatorText", opText);
                     
@@ -524,7 +522,6 @@
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
                 
-                // දත්ත Submit කළ පසු ආරක්ෂාව සඳහා session එක clear කර නැවත PIN ඉල්ලන තත්ත්වයට පත් කරයි
                 sessionStorage.clear();
                 document.getElementById('loginPin').value = "";
                 document.getElementById('activeOperatorDisplay').innerText = "Not Logged In";
