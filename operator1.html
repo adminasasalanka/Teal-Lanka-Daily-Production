@@ -39,7 +39,8 @@
             body { display: none !important; }
         }
 
-        .container { box-sizing: border-box; padding: 10px; padding-top: 185px; }
+        /* 💡 Header එක සෙලවෙන්නේ නැතුව තියෙන්න Container එකේ උඩ පරතරය සකස් කළා */
+        .container { box-sizing: border-box; padding: 10px; padding-top: 195px; }
         .fixed-complete-header { position: fixed; top: 0; left: 0; width: 100%; background-color: #f4f4f9; z-index: 1000; padding: 10px 10px 0 10px; box-sizing: border-box; }
         h2 { text-align: center; color: #28a745; margin: 3px 0; font-size: 18px; }
         h4 { text-align: center; margin: 0 0 8px 0; color: #555; font-size: 13px; }
@@ -51,12 +52,12 @@
         .filter-group label { font-weight: bold; }
         .filter-group select, .filter-group input { padding: 5px 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 12px; }
         
-        /* Header එක ලොක් වෙලා තියෙද්දී ඩේටා ටික විතරක් Scroll වෙන කොටස */
+        /* 💡 Header එක වෙනම තියෙද්දී ඩේටා ටික විතරක් Scroll වෙන්න උස සීමා කළා */
         .table-responsive { 
             width: 100%; 
             overflow-x: auto; 
             overflow-y: auto;
-            max-height: calc(100vh - 205px); 
+            max-height: calc(100vh - 215px); /* Screen එකේ ඉතිරි කොටසට Scrollbar එක සීමා කලා */
             border: 1px solid #aaaaaa; 
             background: white; 
             -webkit-overflow-scrolling: touch; 
@@ -70,7 +71,7 @@
         .col-num { width: 65px; }
         .col-rem { width: 150px; }
         
-        /* Header Table එක උඩම Sticky කරලා ලොක් කරන කොටස */
+        /* 💡 සිරස්තල ටේබල් එක හැමවෙලේම උඩින්ම පේන්න හැදුවා */
         .header-table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -218,8 +219,8 @@
             monthlyTemplate[`${selectedMonth}-${dayStr}`] = []; 
         }
 
-        // 💡 මෙන්න මෙතන මම .orderBy("date", "desc").orderBy("time", "desc") විදිහට නැවත හැදුවා.
-        db.collection("Production_Records").orderBy("date", "desc").orderBy("time", "desc").get()
+        // 💡 ඔයාගේ මුල්ම Query එක එහෙම්මමයි, වෙනස් කළේ නැහැ.
+        db.collection("Production_Records").orderBy("timestamp", "asc").get()
         .then((querySnapshot) => {
             tableBody.innerHTML = ""; 
             
