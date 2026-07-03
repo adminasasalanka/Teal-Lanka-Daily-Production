@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Teal Lanka - Monthly Production Books</title>
     <style>
-        /* Security Fix: Prevent Selection and Copying */
+        /* Security & Landscape Orientation Layout */
         html, body { 
             margin: 0; 
-            padding: 0; 
+            padding: 10px; 
             overflow-y: auto; 
-            overflow-x: hidden; 
+            overflow-x: auto; 
             font-family: Arial, sans-serif; 
             background-color: #f4f4f9; 
             color: #333; 
@@ -20,6 +20,12 @@
             user-select: none;
         }
         
+        /* Force App Layout for Landscape Preference */
+        .app-wrapper {
+            min-width: 1100px; /* Ensures books retain structure when rotating landscape */
+            margin: 0 auto;
+        }
+
         /* Security Blackout Overlay */
         #securityOverlay {
             display: none;
@@ -39,89 +45,101 @@
             body { display: none !important; }
         }
 
-        .container { box-sizing: border-box; padding: 10px; padding-top: 185px; }
-        .fixed-complete-header { position: fixed; top: 0; left: 0; width: 100%; background-color: #f4f4f9; z-index: 1000; padding: 10px 10px 0 10px; box-sizing: border-box; }
-        h2 { text-align: center; color: #28a745; margin: 3px 0; font-size: 18px; }
-        h4 { text-align: center; margin: 0 0 8px 0; color: #555; font-size: 13px; }
-        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
-        .nav-links a { text-decoration: none; padding: 6px 12px; background: #007acc; color: white; border-radius: 5px; font-size: 13px; font-weight: bold; }
+        .container { box-sizing: border-box; padding: 10px; margin-top: 15px; }
+        .fixed-complete-header { background-color: #f4f4f9; padding: 5px 10px; box-sizing: border-box; }
+        h2 { text-align: center; color: #28a745; margin: 3px 0; font-size: 22px; font-weight: bold; }
+        h4 { text-align: center; margin: 0 0 12px 0; color: #555; font-size: 14px; }
+        
+        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; }
+        .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
         .nav-links a.active { background: #28a745; }
-        .filter-area { background: #e9ecef; padding: 6px; border-radius: 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: center; }
-        .filter-group { display: flex; align-items: center; gap: 5px; font-size: 12px; }
-        .filter-group label { font-weight: bold; }
-        .filter-group select, .filter-group input { padding: 5px 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 12px; }
-        .table-responsive { width: 100%; overflow-x: auto; border: 1px solid #aaaaaa; background: white; -webkit-overflow-scrolling: touch; }
+        
+        .filter-area { background: #e9ecef; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; justify-content: center; border: 1px solid #ddd; }
+        .filter-group { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .filter-group label { font-weight: bold; color: #2c3e50; }
+        .filter-group select, .filter-group input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 13px; font-weight: bold; }
+        
+        .table-responsive { width: 100%; border: 1px solid #aaaaaa; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; table-layout: fixed; }
-        th, td { border: 1px solid #aaaaaa; padding: 8px; text-align: center; white-space: nowrap; box-sizing: border-box; }
-        .col-date { width: 50px; }
-        .col-code { width: 90px; }
-        .col-var { width: 150px; }
-        .col-num { width: 65px; }
-        .col-rem { width: 150px; }
-        .header-table { width: 100%; border-collapse: collapse; background: #28a745; color: white; font-weight: bold; box-shadow: 0px 2px 5px rgba(0,0,0,0.1); }
-        .header-table th { background-color: #28a745; padding: 10px 8px; border: 1px solid #aaaaaa; }
-        td[rowspan] { position: sticky; left: 0; background-color: #ffffff !important; z-index: 5; font-weight: bold; }
+        th, td { border: 1px solid #aaaaaa; padding: 10px 8px; text-align: center; white-space: nowrap; box-sizing: border-box; }
+        
+        /* Optimized Data Column Widths for Landscape View */
+        .col-date { width: 60px; }
+        .col-code { width: 100px; }
+        .col-var { width: 180px; }
+        .col-num { width: 80px; }
+        .col-rem { width: 220px; }
+        
+        .header-table { width: 100%; border-collapse: collapse; background: #28a745; color: white; font-weight: bold; }
+        .header-table th { background-color: #28a745; color: white; font-weight: bold; padding: 12px 8px; border: 1px solid #aaaaaa; }
+        
+        td[rowspan] { background-color: #ffffff !important; font-weight: bold; font-size: 14px; }
         .filled-row { background-color: #e8f5e9; font-weight: bold; color: #1b5e20; }
-        .empty-row { background-color: #ffffff; color: #333; }
+        .filled-row:hover { background-color: #c8e6c9; }
+        .empty-row { background-color: #ffffff; color: #666; }
     </style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
 
 <!-- Security Screen Overlay -->
-<div id="securityOverlay">Screen Capture Restricted!</div>
+<div id="securityOverlay">🔒 Screen Capture Restricted!</div>
 
-<div class="fixed-complete-header">
-    <div class="nav-links">
-        <a href="index.html">Data Entry Form</a>
-        <a href="operator1.html" class="active">View Monthly Books</a>
+<!-- Horizontal App Container Wrapper -->
+<div class="app-wrapper">
+    <div class="fixed-complete-header">
+        <div class="nav-links">
+            <a href="index.html">Data Entry Form</a>
+            <a href="operator1.html" class="active">View Monthly Books</a>
+        </div>
+
+        <h2>MONTHLY PRODUCTION SHEETS</h2>
+        <h4>Teal Lanka Production Plan (Landscape View)</h4>
+        
+        <div class="filter-area">
+            <div class="filter-group">
+                <label for="operatorFilter">Select Operator:</label>
+                <select id="operatorFilter">
+                    <option value="" disabled selected hidden>Select Operator</option>
+                    <option value="Operator 1">Operator RS</option>
+                    <option value="Operator 2">Operator TK</option>
+                    <option value="Operator 3">Operator K</option>
+                    <option value="Operator 4">Operator QST</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="monthFilter">Select Month & Year:</label>
+                <input type="month" id="monthFilter">
+            </div>
+        </div>
     </div>
 
-    <h2>MONTHLY PRODUCTION SHEETS</h2>
-    <h4>Teal Lanka Production Plan</h4>
-    
-    <div class="filter-area">
-        <div class="filter-group">
-            <label for="operatorFilter">Select Operator:</label>
-            <select id="operatorFilter">
-                <option value="" disabled selected hidden>Select Operator</option>
-                <option value="Operator 1">Operator RS</option>
-                <option value="Operator 2">Operator TK</option>
-                <option value="Operator 3">Operator K</option>
-                <option value="Operator 4">Operator QST</option>
-            </select>
+    <div class="container">
+        <div class="table-responsive">
+            <table>
+                <colgroup>
+                    <col class="col-date"><col class="col-code"><col class="col-var"><col class="col-num">
+                    <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-num"><col class="col-rem">
+                </colgroup>
+                <thead>
+                    <tr class="header-table">
+                        <th class="col-date">Date</th>
+                        <th class="col-code">Plant Code</th>
+                        <th class="col-var">Variety</th>
+                        <th class="col-num">WK</th>
+                        <th class="col-num">Transfer</th>
+                        <th class="col-num">Used</th>
+                        <th class="col-num">Multy</th>
+                        <th class="col-num">Rooting</th>
+                        <th class="col-rem">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="productionTableBody">
+                    <tr>
+                        <td colspan="9" style="color:#555; font-weight:bold; padding:20px; text-align:center;">Please Select an Operator to View Sheet</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="filter-group">
-            <label for="monthFilter">Select Month & Year:</label>
-            <input type="month" id="monthFilter">
-        </div>
-    </div>
-
-    <table class="header-table">
-        <thead>
-            <tr>
-                <th class="col-date">Date</th>
-                <th class="col-code">Plant Code</th>
-                <th class="col-var">Variety</th>
-                <th class="col-num">WK</th>
-                <th class="col-num">Transfer</th>
-                <th class="col-num">Used</th>
-                <th class="col-num">Multy</th>
-                <th class="col-num">Rooting</th>
-                <th class="col-rem">Remarks</th>
-            </tr>
-        </thead>
-    </table>
-</div>
-
-<div class="container">
-    <div class="table-responsive">
-        <table>
-            <colgroup>
-                <col class="col-date"><col class="col-code"><col class="col-var"><col class="col-num">
-                <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-num"><col class="col-rem">
-            </colgroup>
-            <tbody id="productionTableBody"></tbody>
-        </table>
     </div>
 </div>
 
@@ -234,7 +252,7 @@
                         let row = `<tr class="filled-row">`;
                         
                         if (index === 0) {
-                            row += `<td rowspan="${recordsArray.length}" style="vertical-align: middle; color: #333;"><b>${dayNumber}</b></td>`;
+                            row += `<td rowspan="${recordsArray.length}" style="vertical-align: middle; color: #333; background-color: #ffffff;"><b>${dayNumber}</b></td>`;
                         }
                         
                         row += `
@@ -253,7 +271,7 @@
                     if (dateKey < localISODate) {
                         tableBody.innerHTML += `<tr class="empty-row">
                             <td><b>${dayNumber}</b></td>
-                            <td colspan="8" style="text-align: center; font-weight: bold; color: #777;">Holiday</td>
+                            <td colspan="8" style="text-align: center; font-weight: bold; color: #777; background-color: #f8f9fa;">Holiday / No Data</td>
                         </tr>`;
                     } else {
                         tableBody.innerHTML += `<tr class="empty-row">
