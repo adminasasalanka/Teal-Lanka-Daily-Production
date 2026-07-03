@@ -218,8 +218,8 @@
             monthlyTemplate[`${selectedMonth}-${dayStr}`] = []; 
         }
 
-        // 💡 මෙන්න මෙතන ඔයා හදපු Index එකට ගැලපෙන්න .orderBy("date", "asc").orderBy("time", "asc") කියලා මම වෙනස් කළා.
-        db.collection("Production_Records").orderBy("date", "asc").orderBy("time", "asc").get()
+        // 💡 මෙන්න මෙතන මම .orderBy("date", "desc").orderBy("time", "desc") විදිහට නැවත හැදුවා.
+        db.collection("Production_Records").orderBy("date", "desc").orderBy("time", "desc").get()
         .then((querySnapshot) => {
             tableBody.innerHTML = ""; 
             
