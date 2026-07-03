@@ -19,7 +19,7 @@
         }
         
         .app-wrapper {
-            max-width: 600px; /* ඕනෑම Screen එකකට ගැලපෙන්න මැදට ගත්තා */
+            max-width: 650px; 
             margin: 0 auto;
         }
         
@@ -95,18 +95,18 @@
         .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
         .nav-links a.active { background: #00875a; }
         
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 6px solid #00875a; }
+        .container { background: white; padding: 25px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 6px solid #00875a; }
         .form-header { text-align: center; padding-bottom: 10px; }
         .form-header h2 { margin: 0; color: #2c3e50; font-size: 24px; font-weight: bold; }
         .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 13px; }
         .divider { height: 2px; background-color: #00875a; margin: 15px 0; }
         
-        .operator-section { margin-bottom: 20px; }
-        .operator-label { font-weight: bold; font-size: 14px; color: #2c3e50; }
+        .operator-section { margin-bottom: 25px; }
+        .operator-label { font-weight: bold; font-size: 15px; color: #2c3e50; }
         .operator-display-box {
             background: #e9ecef;
             padding: 10px 15px;
-            border-radius: 5px;
+            border-radius: 6px;
             font-weight: bold;
             color: #00875a;
             display: inline-block;
@@ -114,71 +114,83 @@
             border: 1px solid #ccc;
         }
 
-        /* 💡 Google Form Style Item Card (එක අයිතමයක් වෙනම පෙට්ටියක් ලෙස පහළට) */
+        /* Google Form Style Item Card */
         .item-card {
-            background: #f8f9fa;
-            border: 1px solid #e2e8f0;
-            border-left: 6px solid #00875a;
+            background: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-top: 4px solid #00875a;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
             position: relative;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         
         .item-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eeeeee;
+            padding-bottom: 10px;
         }
         
         .item-card-title {
             font-weight: bold;
-            color: #00875a;
-            font-size: 15px;
+            color: #2c3e50;
+            font-size: 16px;
         }
 
-        /* 💡 ප්‍රශ්න සහ Input එක යටතේ එකක් එන විදිහ */
+        /* 💡 {211B2909-25F3-466B-A17C-1EAD7150D418}.png එකේ විදිහටම සකස් කළ Input fields */
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 20px;
         }
         
         .form-group label {
             display: block;
             font-weight: bold;
-            font-size: 13px;
-            color: #4a5568;
-            margin-bottom: 5px;
+            font-size: 15px;
+            color: #333333;
+            margin-bottom: 8px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 5px;
+            padding: 12px 14px;
+            border: 1px solid #cccccc;
+            border-radius: 6px; /* 💡 කොන් රවුම් වුණු බෝඩර් එක */
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 15px;
             background: #ffffff;
+            color: #000000;
+            transition: border-color 0.2s;
         }
         
+        /* Box එකක් ඇතුලට ක්ලික් කළහම වෙනස් වෙන විදිහ */
         .form-group input:focus {
             border-color: #00875a;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 135, 90, 0.1);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .field-variety { 
+            background-color: #f5f5f5 !important; 
+            color: #555555 !important; 
+            cursor: not-allowed; 
+            font-weight: bold;
         }
 
         /* Banana සඟවන කොටස */
         .hide-bottle-box { display: block; }
         .is-banana .hide-bottle-box { display: none !important; }
 
-        .btn-add-row { width: 100%; background-color: #00875a; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; font-size: 15px; }
-        .btn-remove { background-color: #d9534f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .btn-submit { width: 100%; padding: 14px; background-color: #2575fc; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .btn-add-row { width: 100%; background-color: #ffffff; color: #00875a; border: 2px solid #00875a; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; font-size: 15px; transition: all 0.2s; }
+        .btn-add-row:hover { background-color: #00875a; color: white; }
+        .btn-remove { background-color: #ffffff; color: #d9534f; border: 1px solid #d9534f; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; }
+        .btn-remove:hover { background-color: #d9534f; color: white; }
+        .btn-submit { width: 100%; padding: 14px; background-color: #00875a; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
+        .btn-submit:hover { background-color: #006644; }
         .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px; font-weight: bold; border: 2px solid #c3e6cb; }
-        .field-variety { background-color: #e2e8f0; color: #495057; cursor: not-allowed; font-weight: bold; }
     </style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
@@ -214,17 +226,17 @@
     <div class="container">
         <div class="form-header">
             <h2>Teal Lanka Bio Tech</h2>
-            <p>Production Data Entry Form (Google Form Vertical Style)</p>
+            <p>Production Data Entry Form</p>
         </div>
         <div class="divider"></div>
         
         <form id="productionForm">
             <div class="operator-section">
-                <span class="operator-label">Active Operator Account</span><br>
+                <span class="operator-label">Active Operator Account :</span><br>
                 <div id="activeOperatorDisplay" class="operator-display-box">Not Logged In</div>
             </div>
             
-            <!-- 💡 Dynamic Cards Container -->
+            <!-- Dynamic Cards Container -->
             <div id="dynamicRowsContainer">
                 
                 <!-- Item Card Starts -->
@@ -235,53 +247,53 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>Plant Code</label>
+                        <label>Plant Code :</label>
                         <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
                     </div>
                     
                     <div class="form-group">
-                        <label>Variety</label>
+                        <label>Variety :</label>
                         <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
                     </div>
                     
                     <div class="form-group">
-                        <label>WK</label>
-                        <input type="number" class="field-wk" placeholder="Enter WK" required>
+                        <label>WK :</label>
+                        <input type="number" class="field-wk" placeholder="Enter WK number" required>
                     </div>
                     
                     <div class="form-group">
-                        <label>Transfer</label>
-                        <input type="number" class="field-transfer" placeholder="Enter Transfer Qty" required>
+                        <label>Transfer :</label>
+                        <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
                     </div>
                     
                     <div class="form-group">
-                        <label>Used</label>
-                        <input type="number" class="field-used" placeholder="Enter Used Qty" required>
+                        <label>Used :</label>
+                        <input type="number" class="field-used" placeholder="Enter Used quantity" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="lbl-multy">Multy</label>
-                        <input type="number" class="field-multy" placeholder="Enter Multy Qty" required>
+                        <label class="lbl-multy">Multy :</label>
+                        <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
                     </div>
                     
                     <div class="form-group hide-bottle-box">
-                        <label>M-Bottles</label>
-                        <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles" required>
+                        <label>M-Bottles :</label>
+                        <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="lbl-rooting">Rooting</label>
-                        <input type="number" class="field-rooting" placeholder="Enter Rooting Qty" required>
+                        <label class="lbl-rooting">Rooting :</label>
+                        <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
                     </div>
                     
                     <div class="form-group hide-bottle-box">
-                        <label>R-Bottles</label>
-                        <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles" required>
+                        <label>R-Bottles :</label>
+                        <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
                     </div>
                     
                     <div class="form-group">
-                        <label>Remarks</label>
-                        <input type="text" class="field-remarks" placeholder="Any remarks (Optional)">
+                        <label>Remarks :</label>
+                        <input type="text" class="field-remarks" placeholder="Add any comments here">
                     </div>
                 </div>
                 <!-- Item Card Ends -->
@@ -417,8 +429,8 @@
             varietyInput.value = "";
             card.classList.remove('is-banana');
             mBottles.required = rBottles.required = true;
-            mMain.placeholder = "Enter Multy Qty"; rMain.placeholder = "Enter Rooting Qty";
-            lblMulty.innerText = "Multy"; lblRooting.innerText = "Rooting";
+            mMain.placeholder = "Enter Multy amount"; rMain.placeholder = "Enter Rooting amount";
+            lblMulty.innerText = "Multy :"; lblRooting.innerText = "Rooting :";
             return;
         }
 
@@ -428,15 +440,15 @@
             mBottles.value = rBottles.value = "";
             mMain.placeholder = "Enter Qty (x10)";
             rMain.placeholder = "Enter Qty (x10)";
-            lblMulty.innerText = "Multy Qty (x10)";
-            lblRooting.innerText = "Rooting Qty (x10)";
+            lblMulty.innerText = "Multy Qty (x10) :";
+            lblRooting.innerText = "Rooting Qty (x10) :";
         } else {
             card.classList.remove('is-banana');
             mBottles.required = rBottles.required = true;
-            mMain.placeholder = "Enter Multy Qty";
-            rMain.placeholder = "Enter Rooting Qty";
-            lblMulty.innerText = "Multy";
-            lblRooting.innerText = "Rooting";
+            mMain.placeholder = "Enter Multy amount";
+            rMain.placeholder = "Enter Rooting amount";
+            lblMulty.innerText = "Multy :";
+            lblRooting.innerText = "Rooting :";
         }
 
         try {
@@ -472,49 +484,48 @@
                 <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
             </div>
             <div class="form-group">
-                <label>Plant Code</label>
+                <label>Plant Code :</label>
                 <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
             </div>
             <div class="form-group">
-                <label>Variety</label>
+                <label>Variety :</label>
                 <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
             </div>
             <div class="form-group">
-                <label>WK</label>
-                <input type="number" class="field-wk" placeholder="Enter WK" required>
+                <label>WK :</label>
+                <input type="number" class="field-wk" placeholder="Enter WK number" required>
             </div>
             <div class="form-group">
-                <label>Transfer</label>
-                <input type="number" class="field-transfer" placeholder="Enter Transfer Qty" required>
+                <label>Transfer :</label>
+                <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
             </div>
             <div class="form-group">
-                <label>Used</label>
-                <input type="number" class="field-used" placeholder="Enter Used Qty" required>
+                <label>Used :</label>
+                <input type="number" class="field-used" placeholder="Enter Used quantity" required>
             </div>
             <div class="form-group">
-                <label class="lbl-multy">Multy</label>
-                <input type="number" class="field-multy" placeholder="Enter Multy Qty" required>
+                <label class="lbl-multy">Multy :</label>
+                <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
             </div>
             <div class="form-group hide-bottle-box">
-                <label>M-Bottles</label>
-                <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles" required>
+                <label>M-Bottles :</label>
+                <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
             </div>
             <div class="form-group">
-                <label class="lbl-rooting">Rooting</label>
-                <input type="number" class="field-rooting" placeholder="Enter Rooting Qty" required>
+                <label class="lbl-rooting">Rooting :</label>
+                <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
             </div>
             <div class="form-group hide-bottle-box">
-                <label>R-Bottles</label>
-                <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles" required>
+                <label>R-Bottles :</label>
+                <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
             </div>
             <div class="form-group">
-                <label>Remarks</label>
-                <input type="text" class="field-remarks" placeholder="Any remarks (Optional)">
+                <label>Remarks :</label>
+                <input type="text" class="field-remarks" placeholder="Add any comments here">
             </div>
         `;
         container.appendChild(newCard);
         
-        // පලවෙනි Card එක Banana ද කියලා චෙක් කරලා ඒ අනුව අලුත් එකත් හදනවා
         const firstCard = container.querySelector('.item-card');
         if (firstCard && firstCard.querySelector('.field-plantcode').value.toUpperCase().startsWith('B')) {
             newCard.querySelector('.field-plantcode').value = firstCard.querySelector('.field-plantcode').value;
@@ -623,44 +634,44 @@
                             <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
                         </div>
                         <div class="form-group">
-                            <label>Plant Code</label>
+                            <label>Plant Code :</label>
                             <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
                         </div>
                         <div class="form-group">
-                            <label>Variety</label>
+                            <label>Variety :</label>
                             <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
                         </div>
                         <div class="form-group">
-                            <label>WK</label>
-                            <input type="number" class="field-wk" placeholder="Enter WK" required>
+                            <label>WK :</label>
+                            <input type="number" class="field-wk" placeholder="Enter WK number" required>
                         </div>
                         <div class="form-group">
-                            <label>Transfer</label>
-                            <input type="number" class="field-transfer" placeholder="Enter Transfer Qty" required>
+                            <label>Transfer :</label>
+                            <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
                         </div>
                         <div class="form-group">
-                            <label>Used</label>
-                            <input type="number" class="field-used" placeholder="Enter Used Qty" required>
+                            <label>Used :</label>
+                            <input type="number" class="field-used" placeholder="Enter Used quantity" required>
                         </div>
                         <div class="form-group">
-                            <label class="lbl-multy">Multy</label>
-                            <input type="number" class="field-multy" placeholder="Enter Multy Qty" required>
+                            <label class="lbl-multy">Multy :</label>
+                            <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
                         </div>
                         <div class="form-group hide-bottle-box">
-                            <label>M-Bottles</label>
-                            <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles" required>
+                            <label>M-Bottles :</label>
+                            <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
                         </div>
                         <div class="form-group">
-                            <label class="lbl-rooting">Rooting</label>
-                            <input type="number" class="field-rooting" placeholder="Enter Rooting Qty" required>
+                            <label class="lbl-rooting">Rooting :</label>
+                            <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
                         </div>
                         <div class="form-group hide-bottle-box">
-                            <label>R-Bottles</label>
-                            <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles" required>
+                            <label>R-Bottles :</label>
+                            <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
                         </div>
                         <div class="form-group">
-                            <label>Remarks</label>
-                            <input type="text" class="field-remarks" placeholder="Any remarks (Optional)">
+                            <label>Remarks :</label>
+                            <input type="text" class="field-remarks" placeholder="Add any comments here">
                         </div>
                     </div>
                 `;
