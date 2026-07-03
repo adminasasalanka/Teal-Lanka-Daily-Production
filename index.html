@@ -30,7 +30,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9);
             z-index: 999999;
-            display: none; /* Controlled via JS Session */
+            display: none; 
             justify-content: center;
             align-items: center;
         }
@@ -55,7 +55,6 @@
             font-size: 15px;
         }
 
-        /* PIN Input එක Text එකක් වුණත් අකුරු රවුම් තිත් වලින් සඟවන්න */
         #loginPin {
             -webkit-text-security: disc !important;
             text-security: disc !important;
@@ -115,14 +114,16 @@
             border: 1px solid #ccc;
         }
 
-        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 8px; padding: 10px 6px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
-        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 6px; text-align: center; }
+        /* Grid Columns: Plant Code, Variety, WK, Transfer, Used, Multy, Multy Bottles, Rooting, Rooting Bottles, Remarks, Action */
+        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 1.1fr 0.8fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 8px; padding: 10px 6px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
+        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 1.1fr 0.8fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 6px; text-align: center; }
         
-        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 2.4fr 1.5fr auto; }
-        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 2.4fr 1.5fr auto; }
+        /* Banana Code සදහා Layout එක (අමතර Bottles box 2 හැංගෙන විට) */
+        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.9fr 1.9fr 1.5fr auto; }
+        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.9fr 1.9fr 1.5fr auto; }
 
-        .hide-banana-box { display: block; }
-        .is-banana .hide-banana-box { display: none !important; }
+        .hide-bottle-box { display: block; }
+        .is-banana .hide-bottle-box { display: none !important; }
 
         .btn-add-row { background-color: #00875a; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
         .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
@@ -147,7 +148,6 @@
             <option value="Operator 4">Operator QST</option>
         </select>
         
-        <!-- 💡 inputmode="text" සහ pattern=".*" මඟින් 100% ක්ම අකුරු සහිත QWERTY Keyboard එක බලෙන්ම මතු කරයි -->
         <input type="text" id="loginPin" placeholder="Enter Secret PIN" autocomplete="off" inputmode="text" pattern=".*">
         <button type="button" onclick="initializeAppSession()">Login & Open App</button>
         <div id="loginErrorAlert" class="error-text">Incorrect PIN. Access Denied!</div>
@@ -178,8 +178,8 @@
                 <div style="margin-top: 20px;">
                     <div id="headerRow" class="row-headers">
                         <div>Plant Code</div><div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div>
-                        <div>Multy</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
-                        <div>Rooting</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
+                        <div>Multy</div><div class="hide-bottle-box">Bottles</div>
+                        <div>Rooting</div><div class="hide-bottle-box">Bottles</div>
                         <div>Remarks</div><div>Action</div>
                     </div>
                     
@@ -192,12 +192,10 @@
                             <input type="number" class="field-used" placeholder="Used" required>
                             
                             <input type="number" class="field-multy" placeholder="Multy" required>
-                            <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
-                            <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
+                            <input type="number" class="field-multy-bottles hide-bottle-box" placeholder="Bottles" required>
                             
                             <input type="number" class="field-rooting" placeholder="Rooting" required>
-                            <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
-                            <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
+                            <input type="number" class="field-rooting-bottles hide-bottle-box" placeholder="Bottles" required>
                             
                             <input type="text" class="field-remarks" placeholder="Remarks">
                             <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
@@ -320,9 +318,7 @@
         const varietyInput = row.querySelector('.field-variety');
         
         const mBottles = row.querySelector('.field-multy-bottles');
-        const mPlants = row.querySelector('.field-multy-plants');
         const rBottles = row.querySelector('.field-rooting-bottles');
-        const rPlants = row.querySelector('.field-rooting-plants');
         
         const mMain = row.querySelector('.field-multy');
         const rMain = row.querySelector('.field-rooting');
@@ -330,7 +326,7 @@
         if (plantCode === "") {
             varietyInput.value = "";
             row.classList.remove('is-banana');
-            mBottles.required = mPlants.required = rBottles.required = rPlants.required = true;
+            mBottles.required = rBottles.required = true;
             mMain.placeholder = "Multy"; rMain.placeholder = "Rooting";
             checkHeaderState();
             return;
@@ -338,13 +334,13 @@
 
         if (plantCode.startsWith('B')) {
             row.classList.add('is-banana');
-            mBottles.required = mPlants.required = rBottles.required = rPlants.required = false;
-            mBottles.value = mPlants.value = rBottles.value = rPlants.value = "";
+            mBottles.required = rBottles.required = false;
+            mBottles.value = rBottles.value = "";
             mMain.placeholder = "Qty (x10)";
             rMain.placeholder = "Qty (x10)";
         } else {
             row.classList.remove('is-banana');
-            mBottles.required = mPlants.required = rBottles.required = rPlants.required = true;
+            mBottles.required = rBottles.required = true;
             mMain.placeholder = "Multy";
             rMain.placeholder = "Rooting";
         }
@@ -387,11 +383,9 @@
             <input type="number" class="field-transfer" placeholder="Transfer" required>
             <input type="number" class="field-used" placeholder="Used" required>
             <input type="number" class="field-multy" placeholder="Multy" required>
-            <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
-            <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
+            <input type="number" class="field-multy-bottles hide-bottle-box" placeholder="Bottles" required>
             <input type="number" class="field-rooting" placeholder="Rooting" required>
-            <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
-            <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
+            <input type="number" class="field-rooting-bottles hide-bottle-box" placeholder="Bottles" required>
             <input type="text" class="field-remarks" placeholder="Remarks">
             <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
         `;
@@ -467,14 +461,13 @@
 
                 const mM = parseFloat(row.querySelector('.field-multy').value) || 0;
                 const mB = parseFloat(row.querySelector('.field-multy-bottles').value) || 1;
-                const mP = parseFloat(row.querySelector('.field-multy-plants').value) || 1;
                 
                 const rM = parseFloat(row.querySelector('.field-rooting').value) || 0;
                 const rB = parseFloat(row.querySelector('.field-rooting-bottles').value) || 1;
-                const rP = parseFloat(row.querySelector('.field-rooting-plants').value) || 1;
 
-                let finalMulty = isBanana ? (mM * 10) : (mM * mB * mP);
-                let finalRooting = isBanana ? (rM * 10) : (rM * rB * rP);
+                // 💡Calculation Logic: Ornamental සදහා (Multy * Bottles) සහ (Rooting * Bottles) සිදු වේ
+                let finalMulty = isBanana ? (mM * 10) : (mM * mB);
+                let finalRooting = isBanana ? (rM * 10) : (rM * rB);
 
                 batch.set(docRef, {
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -507,11 +500,9 @@
                         <input type="number" class="field-transfer" placeholder="Transfer" required>
                         <input type="number" class="field-used" placeholder="Used" required>
                         <input type="number" class="field-multy" placeholder="Multy" required>
-                        <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
-                        <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
+                        <input type="number" class="field-multy-bottles hide-bottle-box" placeholder="Bottles" required>
                         <input type="number" class="field-rooting" placeholder="Rooting" required>
-                        <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
-                        <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
+                        <input type="number" class="field-rooting-bottles hide-bottle-box" placeholder="Bottles" required>
                         <input type="text" class="field-remarks" placeholder="Remarks">
                         <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
                     </div>
