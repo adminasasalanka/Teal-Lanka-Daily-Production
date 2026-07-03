@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Teal Lanka - Data Entry Form</title>
+    <title>Teal Lanka - Monthly View</title>
     <style>
         /* Security & Core Styles */
         html, body { 
@@ -19,59 +19,9 @@
         }
         
         .app-wrapper {
-            max-width: 650px; 
+            max-width: 100%; 
             margin: 0 auto;
         }
-        
-        /* App Initialization Password Modal */
-        #appLoginModal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 999999;
-            display: none; 
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-box {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            max-width: 340px;
-            width: 90%;
-        }
-        .modal-box h3 { margin-top: 0; color: #00875a; font-size: 22px; }
-        
-        .modal-box select, .modal-box input {
-            width: 100%;
-            padding: 12px;
-            margin: 12px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 15px;
-        }
-
-        #loginPin {
-            -webkit-text-security: disc !important;
-            text-security: disc !important;
-        }
-
-        .modal-box button {
-            background: #00875a;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            font-size: 15px;
-        }
-        .modal-box button:hover { background: #006644; }
-        .error-text { color: red; font-size: 13px; margin-top: 5px; display: none; font-weight: bold; }
 
         #securityOverlay {
             display: none;
@@ -95,250 +45,197 @@
         .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
         .nav-links a.active { background: #00875a; }
         
-        .container { background: white; padding: 25px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 6px solid #00875a; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 6px solid #007acc; }
         .form-header { text-align: center; padding-bottom: 10px; }
         .form-header h2 { margin: 0; color: #2c3e50; font-size: 24px; font-weight: bold; }
         .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 13px; }
-        .divider { height: 2px; background-color: #00875a; margin: 15px 0; }
-        
-        .operator-section { margin-bottom: 25px; }
-        .operator-label { font-weight: bold; font-size: 15px; color: #2c3e50; }
-        .operator-display-box {
-            background: #e9ecef;
-            padding: 10px 15px;
+        .divider { height: 2px; background-color: #007acc; margin: 15px 0; }
+
+        .filter-section {
+            background: #f8f9fa;
+            padding: 15px;
             border-radius: 6px;
-            font-weight: bold;
-            color: #00875a;
-            display: inline-block;
-            margin-top: 5px;
-            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        /* Google Form Style Item Card */
-        .item-card {
-            background: #ffffff;
-            border: 1px solid #dcdcdc;
-            border-top: 4px solid #00875a;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-            position: relative;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        
-        .item-card-header {
+        .filter-group {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eeeeee;
-            padding-bottom: 10px;
+            flex-direction: column;
+            gap: 5px;
         }
-        
-        .item-card-title {
+
+        .filter-group label {
             font-weight: bold;
-            color: #2c3e50;
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            font-size: 14px;
+            background: white;
+            min-width: 150px;
+        }
+
+        /* 💡 ෂුවර් එකටම ලොක් වෙන්න මෙතන වෙනස්කම් ටිකක් කළා */
+        .table-responsive {
+            display: block;
+            position: relative;
+            max-height: 550px; /* උස මේ ගානට සීමා කළා එතකොට මෙතනින්ම Scrollbar එක එනවා */
+            overflow: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+            background: white;
+        }
+
+        /* 💡 Table Header එක 100% ක් ලොක් කරවන ප්‍රධාන CSS කොටස */
+        table thead tr {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #007acc !important;
+            color: white !important;
+            font-weight: bold;
+            padding: 12px 10px;
+            z-index: 100;
+            box-shadow: inset 0 -2px 0 #005999;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .loading-text {
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            color: #007acc;
             font-size: 16px;
         }
 
-        /* 💡 {211B2909-25F3-466B-A17C-1EAD7150D418}.png එකේ විදිහටම සකස් කළ Input fields */
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
+        .no-data-text {
+            text-align: center;
+            padding: 20px;
             font-weight: bold;
-            font-size: 15px;
-            color: #333333;
-            margin-bottom: 8px;
+            color: #d9534f;
+            font-size: 14px;
         }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #cccccc;
-            border-radius: 6px; /* 💡 කොන් රවුම් වුණු බෝඩර් එක */
-            box-sizing: border-box;
-            font-size: 15px;
-            background: #ffffff;
-            color: #000000;
-            transition: border-color 0.2s;
-        }
-        
-        /* Box එකක් ඇතුලට ක්ලික් කළහම වෙනස් වෙන විදිහ */
-        .form-group input:focus {
-            border-color: #00875a;
-            outline: none;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-        }
-        
-        .field-variety { 
-            background-color: #f5f5f5 !important; 
-            color: #555555 !important; 
-            cursor: not-allowed; 
-            font-weight: bold;
-        }
-
-        /* Banana සඟවන කොටස */
-        .hide-bottle-box { display: block; }
-        .is-banana .hide-bottle-box { display: none !important; }
-
-        .btn-add-row { width: 100%; background-color: #ffffff; color: #00875a; border: 2px solid #00875a; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; font-size: 15px; transition: all 0.2s; }
-        .btn-add-row:hover { background-color: #00875a; color: white; }
-        .btn-remove { background-color: #ffffff; color: #d9534f; border: 1px solid #d9534f; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; }
-        .btn-remove:hover { background-color: #d9534f; color: white; }
-        .btn-submit { width: 100%; padding: 14px; background-color: #00875a; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
-        .btn-submit:hover { background-color: #006644; }
-        .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px; font-weight: bold; border: 2px solid #c3e6cb; }
     </style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
-
-<!-- Login Modal -->
-<div id="appLoginModal">
-    <div class="modal-box">
-        <h3>Teal Lanka Login</h3>
-        <p style="font-size: 13px; color: #666; margin: 0 0 10px 0;">Select your operator profile and PIN</p>
-        
-        <select id="loginOperator">
-            <option value="" disabled selected hidden>Choose Operator</option>
-            <option value="Operator 1">Operator RS</option>
-            <option value="Operator 2">Operator TK</option>
-            <option value="Operator 3">Operator K</option>
-            <option value="Operator 4">Operator QST</option>
-        </select>
-        
-        <input type="text" id="loginPin" placeholder="Enter Secret PIN" autocomplete="off" inputmode="text" pattern=".*">
-        <button type="button" onclick="initializeAppSession()">Login & Open App</button>
-        <div id="loginErrorAlert" class="error-text">Incorrect PIN. Access Denied!</div>
-    </div>
-</div>
 
 <div id="securityOverlay">🔒 Screen Capture Restricted!</div>
 
 <div class="app-wrapper">
     <div class="nav-links">
-        <a href="index.html" class="active">Data Entry Form</a>
-        <a href="operator1.html">View Monthly Books</a>
+        <a href="index.html">Data Entry Form</a>
+        <a href="operator1.html" class="active">View Monthly Books</a>
     </div>
 
     <div class="container">
         <div class="form-header">
             <h2>Teal Lanka Bio Tech</h2>
-            <p>Production Data Entry Form</p>
+            <p>Production Records Log - Monthly View</p>
         </div>
         <div class="divider"></div>
-        
-        <form id="productionForm">
-            <div class="operator-section">
-                <span class="operator-label">Active Operator Account :</span><br>
-                <div id="activeOperatorDisplay" class="operator-display-box">Not Logged In</div>
+
+        <!-- Filters -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Filter by Month</label>
+                <select id="filterMonth" onchange="fetchRecords()">
+                </select>
             </div>
-            
-            <!-- Dynamic Cards Container -->
-            <div id="dynamicRowsContainer">
-                
-                <!-- Item Card Starts -->
-                <div class="item-card">
-                    <div class="item-card-header">
-                        <span class="item-card-title">Production Item #1</span>
-                        <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Plant Code :</label>
-                        <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Variety :</label>
-                        <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>WK :</label>
-                        <input type="number" class="field-wk" placeholder="Enter WK number" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Transfer :</label>
-                        <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Used :</label>
-                        <input type="number" class="field-used" placeholder="Enter Used quantity" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="lbl-multy">Multy :</label>
-                        <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
-                    </div>
-                    
-                    <div class="form-group hide-bottle-box">
-                        <label>M-Bottles :</label>
-                        <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="lbl-rooting">Rooting :</label>
-                        <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
-                    </div>
-                    
-                    <div class="form-group hide-bottle-box">
-                        <label>R-Bottles :</label>
-                        <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Remarks :</label>
-                        <input type="text" class="field-remarks" placeholder="Add any comments here">
-                    </div>
-                </div>
-                <!-- Item Card Ends -->
-                
+            <div class="filter-group">
+                <label>Filter by Operator</label>
+                <select id="filterOperator" onchange="fetchRecords()">
+                    <option value="ALL">All Operators</option>
+                    <option value="Operator 1">Operator RS</option>
+                    <option value="Operator 2">Operator TK</option>
+                    <option value="Operator 3">Operator K</option>
+                    <option value="Operator 4">Operator QST</option>
+                </select>
             </div>
-            
-            <button type="button" class="btn-add-row" id="btnAddRow">+ Add Another Item</button>
-            <button type="submit" class="btn-submit" id="btnSubmit">SUBMIT PRODUCTION DATA</button>
-        </form>
-        
-        <div id="successMessage" class="success-box">Thank You!<br><span style="font-size: 14px; font-weight: normal;">Your Production Data Has Been Submitted Successfully.</span></div>
+        </div>
+
+        <!-- Scrollable Table Container -->
+        <div class="table-responsive">
+            <table id="recordsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Operator</th>
+                        <th>Plant Code</th>
+                        <th>Variety</th>
+                        <th>WK</th>
+                        <th>Transfer</th>
+                        <th>Used</th>
+                        <th>Multy Total</th>
+                        <th>Rooting Total</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsTableBody">
+                    <tr>
+                        <td colspan="11" class="loading-text">Loading records from database...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
     const overlay = document.getElementById('securityOverlay');
-
     function triggerBlackout() {
         overlay.style.display = 'block';
         setTimeout(() => { overlay.style.display = 'none'; }, 1500);
     }
-
     document.addEventListener('visibilitychange', () => { if (document.hidden) triggerBlackout(); });
     window.addEventListener('blur', triggerBlackout);
     window.addEventListener('pagehide', triggerBlackout);
 
     function disableSecurityKeys(e) {
         if (e.keyCode == 44 || (e.metaKey && e.shiftKey && (e.keyCode == 52 || e.keyCode == 51)) || (e.ctrlKey && e.shiftKey && e.keyCode == 83)) {
-            e.preventDefault();
-            triggerBlackout();
-            return false;
+            e.preventDefault(); triggerBlackout(); return false;
         }
         if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 67 || e.keyCode == 83 || e.keyCode == 80))) {
-            e.preventDefault();
-            return false;
+            e.preventDefault(); return false;
         }
     }
-    
-    document.addEventListener('copy', (e) => {
-        e.clipboardData.setData('text/plain', 'Not Allowed');
-        e.preventDefault();
-    });
+    document.addEventListener('copy', (e) => { e.clipboardData.setData('text/plain', 'Not Allowed'); e.preventDefault(); });
 
     const firebaseConfig = {
         apiKey: "AIzaSyBRLKdJqdC4kwT4qPvHBPjf1vX2viSBxqg",
@@ -350,349 +247,93 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const auth = firebase.auth();
 
-    const operatorPins = {
-        "Operator 1": "17Ec9F9F@1",
-        "Operator 2": "17Ec9F9F@2",
-        "Operator 3": "17Ec9F9F@3",
-        "Operator 4": "17Ec9F9F@4" 
+    const operatorNames = {
+        "Operator 1": "Operator RS",
+        "Operator 2": "Operator TK",
+        "Operator 3": "Operator K",
+        "Operator 4": "Operator QST"
     };
 
     document.addEventListener("DOMContentLoaded", () => {
-        const savedOperator = sessionStorage.getItem("activeOperator");
-        const savedOpText = sessionStorage.getItem("activeOperatorText");
-        
-        if (savedOperator && savedOpText) {
-            auth.signInAnonymously().then(() => {
-                document.getElementById('activeOperatorDisplay').innerText = `Logged In: ${savedOpText} ✅`;
-                document.getElementById('appLoginModal').style.display = 'none';
-            });
-        } else {
-            document.getElementById('appLoginModal').style.display = 'flex';
-        }
-        updateCardNumbers();
+        populateMonthFilter();
+        fetchRecords();
     });
 
-    function initializeAppSession() {
-        const selectElement = document.getElementById('loginOperator');
-        const pinInput = document.getElementById('loginPin');
-        const errDiv = document.getElementById('loginErrorAlert');
-
-        const selectedOp = selectElement.value;
-        const enteredPin = pinInput.value;
-
-        if(!selectedOp) {
-            errDiv.innerText = "Please choose an operator profile first!";
-            errDiv.style.display = "block";
-            return;
-        }
-
-        if (enteredPin.toUpperCase() === operatorPins[selectedOp].toUpperCase()) {
-            auth.signInAnonymously()
-                .then(() => {
-                    const opText = selectElement.options[selectElement.selectedIndex].text;
-                    
-                    sessionStorage.setItem("activeOperator", selectedOp);
-                    sessionStorage.setItem("activeOperatorText", opText);
-                    
-                    document.getElementById('activeOperatorDisplay').innerText = `Logged In: ${opText} ✅`;
-                    document.getElementById('appLoginModal').style.display = 'none';
-                    errDiv.style.display = "none";
-                })
-                .catch((err) => {
-                    errDiv.innerText = "Security Connection Failed: " + err.message;
-                    errDiv.style.display = "block";
-                });
-        } else {
-            errDiv.innerText = "Incorrect PIN ❌. Access Denied!";
-            errDiv.style.display = "block";
-            pinInput.value = "";
+    function populateMonthFilter() {
+        const monthSelect = document.getElementById('filterMonth');
+        const now = new Date();
+        for (let i = 0; i < 6; i++) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const value = d.toISOString().substring(0, 7);
+            const label = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+            const opt = document.createElement('option');
+            opt.value = value;
+            opt.innerText = label;
+            monthSelect.appendChild(opt);
         }
     }
 
-    window.fetchVariety = async function(inputElement) {
-        const plantCode = inputElement.value.trim().toUpperCase();
-        const card = inputElement.closest('.item-card');
-        const varietyInput = card.querySelector('.field-variety');
-        
-        const mBottles = card.querySelector('.field-multy-bottles');
-        const rBottles = card.querySelector('.field-rooting-bottles');
-        
-        const mMain = card.querySelector('.field-multy');
-        const rMain = card.querySelector('.field-rooting');
-        
-        const lblMulty = card.querySelector('.lbl-multy');
-        const lblRooting = card.querySelector('.lbl-rooting');
+    async function fetchRecords() {
+        const tbody = document.getElementById('recordsTableBody');
+        const selectedMonth = document.getElementById('filterMonth').value;
+        const selectedOp = document.getElementById('filterOperator').value;
 
-        if (plantCode === "") {
-            varietyInput.value = "";
-            card.classList.remove('is-banana');
-            mBottles.required = rBottles.required = true;
-            mMain.placeholder = "Enter Multy amount"; rMain.placeholder = "Enter Rooting amount";
-            lblMulty.innerText = "Multy :"; lblRooting.innerText = "Rooting :";
-            return;
-        }
-
-        if (plantCode.startsWith('B')) {
-            card.classList.add('is-banana');
-            mBottles.required = rBottles.required = false;
-            mBottles.value = rBottles.value = "";
-            mMain.placeholder = "Enter Qty (x10)";
-            rMain.placeholder = "Enter Qty (x10)";
-            lblMulty.innerText = "Multy Qty (x10) :";
-            lblRooting.innerText = "Rooting Qty (x10) :";
-        } else {
-            card.classList.remove('is-banana');
-            mBottles.required = rBottles.required = true;
-            mMain.placeholder = "Enter Multy amount";
-            rMain.placeholder = "Enter Rooting amount";
-            lblMulty.innerText = "Multy :";
-            lblRooting.innerText = "Rooting :";
-        }
+        tbody.innerHTML = `<tr><td colspan="11" class="loading-text">Updating Log Sheet View...</td></tr>`;
 
         try {
-            const docRef = db.collection("Plants").doc(plantCode);
-            const docSnap = await docRef.get();
+            const startOfMonth = `${selectedMonth}-01`;
+            const endOfMonth = `${selectedMonth}-31`;
 
-            if (docSnap.exists) {
-                varietyInput.value = docSnap.data().varietyName;
-                varietyInput.style.borderColor = "#00875a";
-            } else {
-                varietyInput.value = "Unknown Code ❌";
-                varietyInput.style.borderColor = "#d9534f";
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
+            let query = db.collection("Production_Records")
+                .where("date", ">=", startOfMonth)
+                .where("date", "<=", endOfMonth)
+                .orderBy("date", "desc")
+                .orderBy("time", "desc");
 
-    function updateCardNumbers() {
-        const cards = document.getElementsByClassName('item-card');
-        for (let i = 0; i < cards.length; i++) {
-            cards[i].querySelector('.item-card-title').innerText = `Production Item #${i + 1}`;
-        }
-    }
+            const querySnapshot = await query.get();
+            tbody.innerHTML = "";
 
-    document.getElementById('btnAddRow').addEventListener('click', () => {
-        const container = document.getElementById('dynamicRowsContainer');
-        const newCard = document.createElement('div');
-        newCard.className = 'item-card';
-        newCard.innerHTML = `
-            <div class="item-card-header">
-                <span class="item-card-title">Production Item</span>
-                <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
-            </div>
-            <div class="form-group">
-                <label>Plant Code :</label>
-                <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
-            </div>
-            <div class="form-group">
-                <label>Variety :</label>
-                <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
-            </div>
-            <div class="form-group">
-                <label>WK :</label>
-                <input type="number" class="field-wk" placeholder="Enter WK number" required>
-            </div>
-            <div class="form-group">
-                <label>Transfer :</label>
-                <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
-            </div>
-            <div class="form-group">
-                <label>Used :</label>
-                <input type="number" class="field-used" placeholder="Enter Used quantity" required>
-            </div>
-            <div class="form-group">
-                <label class="lbl-multy">Multy :</label>
-                <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
-            </div>
-            <div class="form-group hide-bottle-box">
-                <label>M-Bottles :</label>
-                <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
-            </div>
-            <div class="form-group">
-                <label class="lbl-rooting">Rooting :</label>
-                <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
-            </div>
-            <div class="form-group hide-bottle-box">
-                <label>R-Bottles :</label>
-                <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
-            </div>
-            <div class="form-group">
-                <label>Remarks :</label>
-                <input type="text" class="field-remarks" placeholder="Add any comments here">
-            </div>
-        `;
-        container.appendChild(newCard);
-        
-        const firstCard = container.querySelector('.item-card');
-        if (firstCard && firstCard.querySelector('.field-plantcode').value.toUpperCase().startsWith('B')) {
-            newCard.querySelector('.field-plantcode').value = firstCard.querySelector('.field-plantcode').value;
-            fetchVariety(newCard.querySelector('.field-plantcode'));
-        }
-        
-        updateCardNumbers();
-    });
-
-    function removeRow(button) {
-        const container = document.getElementById('dynamicRowsContainer');
-        if (container.getElementsByClassName('item-card').length > 1) { 
-            button.closest('.item-card').remove(); 
-            updateCardNumbers();
-        } else { 
-            alert("At least one data item must be kept!"); 
-        }
-    }
-
-    document.getElementById('productionForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const activeOp = sessionStorage.getItem("activeOperator");
-
-        if (!activeOp || !auth.currentUser) {
-            alert("Unauthorized Submission 🔒! App session expired. Please re-open the app.");
-            return;
-        }
-
-        const btnSubmit = document.getElementById('btnSubmit');
-        const successBox = document.getElementById('successMessage');
-        const form = document.getElementById('productionForm');
-        
-        const tzOffset = (new Date()).getTimezoneOffset() * 60000;
-        const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
-        const currentTimeStr = new Date().toTimeString().split(' ')[0];
-
-        const allCards = document.getElementById('dynamicRowsContainer').getElementsByClassName('item-card');
-        for (let card of allCards) {
-            const varVal = card.querySelector('.field-variety').value;
-            if (varVal === "" || varVal.includes("Unknown Code")) {
-                alert("Please enter valid Plant Codes before submitting!");
-                return;
-            }
-        }
-
-        btnSubmit.disabled = true;
-        btnSubmit.innerText = "CHECKING VALIDATION...";
-
-        try {
-            const querySnapshot = await db.collection("Production_Records")
-                .where("operator", "==", activeOp)
-                .where("date", "==", todayStr)
-                .get();
-
-            if (!querySnapshot.empty) {
-                alert(`Already Submitted Today!\nYour profile has already entered data for ${todayStr}.`);
-                btnSubmit.disabled = false;
-                btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+            if (querySnapshot.empty) {
+                tbody.innerHTML = `<tr><td colspan="11" class="no-data-text">No data records found for this month!</td></tr>`;
                 return;
             }
 
-            btnSubmit.innerText = "SAVING DATA...";
-            const batch = db.batch();
+            let hasData = false;
 
-            for (let card of allCards) {
-                const docRef = db.collection("Production_Records").doc();
-                const pCode = card.querySelector('.field-plantcode').value.trim().toUpperCase();
-                const isBanana = pCode.startsWith('B');
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (selectedOp !== "ALL" && data.operator !== selectedOp) { return; }
 
-                const mM = parseFloat(card.querySelector('.field-multy').value) || 0;
-                const mB = parseFloat(card.querySelector('.field-multy-bottles').value) || 1;
-                
-                const rM = parseFloat(card.querySelector('.field-rooting').value) || 0;
-                const rB = parseFloat(card.querySelector('.field-rooting-bottles').value) || 1;
+                hasData = true;
+                const tr = document.createElement('tr');
+                const opDisplay = operatorNames[data.operator] || data.operator;
 
-                let finalMulty = isBanana ? (mM * 10) : (mM * mB);
-                let finalRooting = isBanana ? (rM * 10) : (rM * rB);
-
-                batch.set(docRef, {
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    date: todayStr,
-                    time: currentTimeStr,
-                    operator: activeOp,
-                    plantCode: pCode,
-                    variety: card.querySelector('.field-variety').value,
-                    wk: parseInt(card.querySelector('.field-wk').value),
-                    transfer: parseInt(card.querySelector('.field-transfer').value),
-                    used: parseInt(card.querySelector('.field-used').value),
-                    multy: Math.round(finalMulty),
-                    rooting: Math.round(finalRooting),
-                    remarks: card.querySelector('.field-remarks').value || '-'
-                });
-            }
-
-            await batch.commit();
-            
-            form.style.display = 'none';
-            successBox.style.display = 'block';
-
-            setTimeout(() => {
-                form.reset();
-                document.getElementById('dynamicRowsContainer').innerHTML = `
-                    <div class="item-card">
-                        <div class="item-card-header">
-                            <span class="item-card-title">Production Item #1</span>
-                            <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
-                        </div>
-                        <div class="form-group">
-                            <label>Plant Code :</label>
-                            <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
-                        </div>
-                        <div class="form-group">
-                            <label>Variety :</label>
-                            <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
-                        </div>
-                        <div class="form-group">
-                            <label>WK :</label>
-                            <input type="number" class="field-wk" placeholder="Enter WK number" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Transfer :</label>
-                            <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Used :</label>
-                            <input type="number" class="field-used" placeholder="Enter Used quantity" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="lbl-multy">Multy :</label>
-                            <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
-                        </div>
-                        <div class="form-group hide-bottle-box">
-                            <label>M-Bottles :</label>
-                            <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="lbl-rooting">Rooting :</label>
-                            <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
-                        </div>
-                        <div class="form-group hide-bottle-box">
-                            <label>R-Bottles :</label>
-                            <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Remarks :</label>
-                            <input type="text" class="field-remarks" placeholder="Add any comments here">
-                        </div>
-                    </div>
+                tr.innerHTML = `
+                    <td style="font-weight:bold; white-space:nowrap;">${data.date}</td>
+                    <td>${data.time}</td>
+                    <td style="color:#007acc; font-weight:bold;">${opDisplay}</td>
+                    <td style="font-weight:bold;">${data.plantCode}</td>
+                    <td>${data.variety}</td>
+                    <td>${data.wk}</td>
+                    <td>${data.transfer}</td>
+                    <td>${data.used}</td>
+                    <td style="color:#00875a; font-weight:bold;">${data.multy}</td>
+                    <td style="color:#b55d00; font-weight:bold;">${data.rooting}</td>
+                    <td style="font-style:italic; color:#666;">${data.remarks}</td>
                 `;
-                successBox.style.display = 'none';
-                form.style.display = 'block';
-                btnSubmit.disabled = false;
-                btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
-                
-                sessionStorage.clear();
-                document.getElementById('loginPin').value = "";
-                document.getElementById('activeOperatorDisplay').innerText = "Not Logged In";
-                document.getElementById('appLoginModal').style.display = 'flex';
-                updateCardNumbers();
-            }, 2500);
+                tbody.appendChild(tr);
+            });
+
+            if (!hasData) {
+                tbody.innerHTML = `<tr><td colspan="11" class="no-data-text">No records found for the selected operator this month.</td></tr>`;
+            }
 
         } catch (error) {
-            alert("Error: " + error.message);
-            btnSubmit.disabled = false;
-            btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+            console.error("Error fetching records: ", error);
+            tbody.innerHTML = `<tr><td colspan="11" class="no-data-text" style="color:red;">Database Error: ${error.message}</td></tr>`;
         }
-    });
+    }
 </script>
 </body>
 </html>
