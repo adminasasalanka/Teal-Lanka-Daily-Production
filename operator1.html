@@ -3,36 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Teal Lanka - Monthly Production Books</title>
+    <title>Teal Lanka - Data Entry Form</title>
     <style>
-        /* Security & Landscape Orientation Layout */
+        /* Security & Core Styles */
         html, body { 
-            margin: 0; 
-            padding: 10px; 
-            overflow-y: auto; 
-            overflow-x: auto; 
             font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 10px;
             background-color: #f4f4f9; 
             color: #333; 
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+            -moz-user-select: none; 
+            -ms-user-select: none; 
             user-select: none;
         }
         
-        /* Force App Layout for Landscape Preference */
         .app-wrapper {
-            min-width: 1100px; /* Ensures books retain structure when rotating landscape */
+            max-width: 650px; 
             margin: 0 auto;
         }
+        
+        /* App Initialization Password Modal */
+        #appLoginModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 999999;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            max-width: 340px;
+            width: 90%;
+        }
+        .modal-box h3 { margin-top: 0; color: #00875a; font-size: 22px; }
+        
+        .modal-box select, .modal-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
 
-        /* Security Blackout Overlay */
+        #loginPin {
+            -webkit-text-security: disc !important;
+            text-security: disc !important;
+        }
+
+        .modal-box button {
+            background: #00875a;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+        }
+        .modal-box button:hover { background: #006644; }
+        .error-text { color: red; font-size: 13px; margin-top: 5px; display: none; font-weight: bold; }
+
         #securityOverlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #000000;
-            z-index: 999999;
+            z-index: 888888;
             color: white;
             text-align: center;
             padding-top: 50vh;
@@ -40,120 +86,237 @@
             font-size: 20px;
             font-weight: bold;
         }
-
+        
         @media print {
             body { display: none !important; }
         }
 
-        .container { box-sizing: border-box; padding: 10px; margin-top: 15px; }
-        .fixed-complete-header { background-color: #f4f4f9; padding: 5px 10px; box-sizing: border-box; }
-        h2 { text-align: center; color: #28a745; margin: 3px 0; font-size: 22px; font-weight: bold; }
-        h4 { text-align: center; margin: 0 0 12px 0; color: #555; font-size: 14px; }
-        
-        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; }
+        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; list-style: none; padding: 0; }
         .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
-        .nav-links a.active { background: #28a745; }
+        .nav-links a.active { background: #00875a; }
         
-        .filter-area { background: #e9ecef; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; justify-content: center; border: 1px solid #ddd; }
-        .filter-group { display: flex; align-items: center; gap: 8px; font-size: 13px; }
-        .filter-group label { font-weight: bold; color: #2c3e50; }
-        .filter-group select, .filter-group input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 13px; font-weight: bold; }
+        .container { background: white; padding: 25px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 6px solid #00875a; }
+        .form-header { text-align: center; padding-bottom: 10px; }
+        .form-header h2 { margin: 0; color: #2c3e50; font-size: 24px; font-weight: bold; }
+        .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 13px; }
+        .divider { height: 2px; background-color: #00875a; margin: 15px 0; }
         
-        .table-responsive { width: 100%; border: 1px solid #aaaaaa; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; table-layout: fixed; }
-        th, td { border: 1px solid #aaaaaa; padding: 10px 8px; text-align: center; white-space: nowrap; box-sizing: border-box; }
+        .operator-section { margin-bottom: 25px; }
+        .operator-label { font-weight: bold; font-size: 15px; color: #2c3e50; }
+        .operator-display-box {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #00875a;
+            display: inline-block;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* Google Form Style Item Card */
+        .item-card {
+            background: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-top: 4px solid #00875a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
         
-        /* Optimized Data Column Widths for Landscape View */
-        .col-date { width: 60px; }
-        .col-code { width: 100px; }
-        .col-var { width: 180px; }
-        .col-num { width: 80px; }
-        .col-rem { width: 220px; }
+        .item-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eeeeee;
+            padding-bottom: 10px;
+        }
         
-        .header-table { width: 100%; border-collapse: collapse; background: #28a745; color: white; font-weight: bold; }
-        .header-table th { background-color: #28a745; color: white; font-weight: bold; padding: 12px 8px; border: 1px solid #aaaaaa; }
+        .item-card-title {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        /* 💡 {211B2909-25F3-466B-A17C-1EAD7150D418}.png එකේ විදිහටම සකස් කළ Input fields */
+        .form-group {
+            margin-bottom: 20px;
+        }
         
-        td[rowspan] { background-color: #ffffff !important; font-weight: bold; font-size: 14px; }
-        .filled-row { background-color: #e8f5e9; font-weight: bold; color: #1b5e20; }
-        .filled-row:hover { background-color: #c8e6c9; }
-        .empty-row { background-color: #ffffff; color: #666; }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            font-size: 15px;
+            color: #333333;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cccccc;
+            border-radius: 6px; /* 💡 කොන් රවුම් වුණු බෝඩර් එක */
+            box-sizing: border-box;
+            font-size: 15px;
+            background: #ffffff;
+            color: #000000;
+            transition: border-color 0.2s;
+        }
+        
+        /* Box එකක් ඇතුලට ක්ලික් කළහම වෙනස් වෙන විදිහ */
+        .form-group input:focus {
+            border-color: #00875a;
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .field-variety { 
+            background-color: #f5f5f5 !important; 
+            color: #555555 !important; 
+            cursor: not-allowed; 
+            font-weight: bold;
+        }
+
+        /* Banana සඟවන කොටස */
+        .hide-bottle-box { display: block; }
+        .is-banana .hide-bottle-box { display: none !important; }
+
+        .btn-add-row { width: 100%; background-color: #ffffff; color: #00875a; border: 2px solid #00875a; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; font-size: 15px; transition: all 0.2s; }
+        .btn-add-row:hover { background-color: #00875a; color: white; }
+        .btn-remove { background-color: #ffffff; color: #d9534f; border: 1px solid #d9534f; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; }
+        .btn-remove:hover { background-color: #d9534f; color: white; }
+        .btn-submit { width: 100%; padding: 14px; background-color: #00875a; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
+        .btn-submit:hover { background-color: #006644; }
+        .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px; font-weight: bold; border: 2px solid #c3e6cb; }
     </style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
 
-<!-- Security Screen Overlay -->
-<div id="securityOverlay">🔒 Screen Capture Restricted!</div>
-
-<!-- Horizontal App Container Wrapper -->
-<div class="app-wrapper">
-    <div class="fixed-complete-header">
-        <div class="nav-links">
-            <a href="index.html">Data Entry Form</a>
-            <a href="operator1.html" class="active">View Monthly Books</a>
-        </div>
-
-        <h2>MONTHLY PRODUCTION SHEETS</h2>
-        <h4>Teal Lanka Production Plan (Landscape View)</h4>
+<!-- Login Modal -->
+<div id="appLoginModal">
+    <div class="modal-box">
+        <h3>Teal Lanka Login</h3>
+        <p style="font-size: 13px; color: #666; margin: 0 0 10px 0;">Select your operator profile and PIN</p>
         
-        <div class="filter-area">
-            <div class="filter-group">
-                <label for="operatorFilter">Select Operator:</label>
-                <select id="operatorFilter">
-                    <option value="" disabled selected hidden>Select Operator</option>
-                    <option value="Operator 1">Operator RS</option>
-                    <option value="Operator 2">Operator TK</option>
-                    <option value="Operator 3">Operator K</option>
-                    <option value="Operator 4">Operator QST</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="monthFilter">Select Month & Year:</label>
-                <input type="month" id="monthFilter">
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="table-responsive">
-            <table>
-                <colgroup>
-                    <col class="col-date"><col class="col-code"><col class="col-var"><col class="col-num">
-                    <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-num"><col class="col-rem">
-                </colgroup>
-                <thead>
-                    <tr class="header-table">
-                        <th class="col-date">Date</th>
-                        <th class="col-code">Plant Code</th>
-                        <th class="col-var">Variety</th>
-                        <th class="col-num">WK</th>
-                        <th class="col-num">Transfer</th>
-                        <th class="col-num">Used</th>
-                        <th class="col-num">Multy</th>
-                        <th class="col-num">Rooting</th>
-                        <th class="col-rem">Remarks</th>
-                    </tr>
-                </thead>
-                <tbody id="productionTableBody">
-                    <tr>
-                        <td colspan="9" style="color:#555; font-weight:bold; padding:20px; text-align:center;">Please Select an Operator to View Sheet</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <select id="loginOperator">
+            <option value="" disabled selected hidden>Choose Operator</option>
+            <option value="Operator 1">Operator RS</option>
+            <option value="Operator 2">Operator TK</option>
+            <option value="Operator 3">Operator K</option>
+            <option value="Operator 4">Operator QST</option>
+        </select>
+        
+        <input type="text" id="loginPin" placeholder="Enter Secret PIN" autocomplete="off" inputmode="text" pattern=".*">
+        <button type="button" onclick="initializeAppSession()">Login & Open App</button>
+        <div id="loginErrorAlert" class="error-text">Incorrect PIN. Access Denied!</div>
     </div>
 </div>
 
-<!-- Firebase Compat Scripts -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<div id="securityOverlay">🔒 Screen Capture Restricted!</div>
+
+<div class="app-wrapper">
+    <div class="nav-links">
+        <a href="index.html" class="active">Data Entry Form</a>
+        <a href="operator1.html">View Monthly Books</a>
+    </div>
+
+    <div class="container">
+        <div class="form-header">
+            <h2>Teal Lanka Bio Tech</h2>
+            <p>Production Data Entry Form</p>
+        </div>
+        <div class="divider"></div>
+        
+        <form id="productionForm">
+            <div class="operator-section">
+                <span class="operator-label">Active Operator Account :</span><br>
+                <div id="activeOperatorDisplay" class="operator-display-box">Not Logged In</div>
+            </div>
+            
+            <!-- Dynamic Cards Container -->
+            <div id="dynamicRowsContainer">
+                
+                <!-- Item Card Starts -->
+                <div class="item-card">
+                    <div class="item-card-header">
+                        <span class="item-card-title">Production Item #1</span>
+                        <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Plant Code :</label>
+                        <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Variety :</label>
+                        <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>WK :</label>
+                        <input type="number" class="field-wk" placeholder="Enter WK number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Transfer :</label>
+                        <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Used :</label>
+                        <input type="number" class="field-used" placeholder="Enter Used quantity" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="lbl-multy">Multy :</label>
+                        <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
+                    </div>
+                    
+                    <div class="form-group hide-bottle-box">
+                        <label>M-Bottles :</label>
+                        <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="lbl-rooting">Rooting :</label>
+                        <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
+                    </div>
+                    
+                    <div class="form-group hide-bottle-box">
+                        <label>R-Bottles :</label>
+                        <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Remarks :</label>
+                        <input type="text" class="field-remarks" placeholder="Add any comments here">
+                    </div>
+                </div>
+                <!-- Item Card Ends -->
+                
+            </div>
+            
+            <button type="button" class="btn-add-row" id="btnAddRow">+ Add Another Item</button>
+            <button type="submit" class="btn-submit" id="btnSubmit">SUBMIT PRODUCTION DATA</button>
+        </form>
+        
+        <div id="successMessage" class="success-box">Thank You!<br><span style="font-size: 14px; font-weight: normal;">Your Production Data Has Been Submitted Successfully.</span></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
-    // Robust Security Controls
     const overlay = document.getElementById('securityOverlay');
 
     function triggerBlackout() {
         overlay.style.display = 'block';
-        setTimeout(() => { overlay.style.display = 'none'; }, 1500); 
+        setTimeout(() => { overlay.style.display = 'none'; }, 1500);
     }
 
     document.addEventListener('visibilitychange', () => { if (document.hidden) triggerBlackout(); });
@@ -177,7 +340,6 @@
         e.preventDefault();
     });
 
-    // Firebase Configurations
     const firebaseConfig = {
         apiKey: "AIzaSyBRLKdJqdC4kwT4qPvHBPjf1vX2viSBxqg",
         authDomain: "teal-lanka-daily-production.firebaseapp.com",
@@ -190,102 +352,347 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    firebase.firestore().enablePersistence().catch(function(err) { console.log(err.code); });
+    const operatorPins = {
+        "Operator 1": "17Ec9F9F@1",
+        "Operator 2": "17Ec9F9F@2",
+        "Operator 3": "17Ec9F9F@3",
+        "Operator 4": "17Ec9F9F@4" 
+    };
 
-    const today = new Date();
-    document.getElementById('monthFilter').value = today.toISOString().substring(0, 7);
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedOperator = sessionStorage.getItem("activeOperator");
+        const savedOpText = sessionStorage.getItem("activeOperatorText");
+        
+        if (savedOperator && savedOpText) {
+            auth.signInAnonymously().then(() => {
+                document.getElementById('activeOperatorDisplay').innerText = `Logged In: ${savedOpText} ✅`;
+                document.getElementById('appLoginModal').style.display = 'none';
+            });
+        } else {
+            document.getElementById('appLoginModal').style.display = 'flex';
+        }
+        updateCardNumbers();
+    });
 
-    // Secure Session Start and initial load
-    auth.signInAnonymously()
-        .then(() => {
-            renderMonthlySheet();
-        })
-        .catch((error) => {
-            document.getElementById('productionTableBody').innerHTML = 
-                `<tr><td colspan="9" style="color: red; text-align:center; font-weight:bold; padding:20px;">🔒 Security Authentication Failed: ${error.message}</td></tr>`;
-        });
+    function initializeAppSession() {
+        const selectElement = document.getElementById('loginOperator');
+        const pinInput = document.getElementById('loginPin');
+        const errDiv = document.getElementById('loginErrorAlert');
 
-    document.getElementById('monthFilter').addEventListener('change', renderMonthlySheet);
-    document.getElementById('operatorFilter').addEventListener('change', renderMonthlySheet);
+        const selectedOp = selectElement.value;
+        const enteredPin = pinInput.value;
 
-    function renderMonthlySheet() {
-        const tableBody = document.getElementById('productionTableBody');
-        const selectedOperator = document.getElementById('operatorFilter').value; 
-
-        if (!selectedOperator) {
-            tableBody.innerHTML = `<tr><td colspan="9" style="color:#555; font-weight:bold; padding:20px; text-align:center;">Please Select an Operator to View Sheet</td></tr>`;
+        if(!selectedOp) {
+            errDiv.innerText = "Please choose an operator profile first!";
+            errDiv.style.display = "block";
             return;
         }
 
-        tableBody.innerHTML = `<tr><td colspan="9" style="color:blue; font-weight:bold; padding:20px; text-align:center;">Loading Book Data... Please Wait...</td></tr>`; 
+        if (enteredPin.toUpperCase() === operatorPins[selectedOp].toUpperCase()) {
+            auth.signInAnonymously()
+                .then(() => {
+                    const opText = selectElement.options[selectElement.selectedIndex].text;
+                    
+                    sessionStorage.setItem("activeOperator", selectedOp);
+                    sessionStorage.setItem("activeOperatorText", opText);
+                    
+                    document.getElementById('activeOperatorDisplay').innerText = `Logged In: ${opText} ✅`;
+                    document.getElementById('appLoginModal').style.display = 'none';
+                    errDiv.style.display = "none";
+                })
+                .catch((err) => {
+                    errDiv.innerText = "Security Connection Failed: " + err.message;
+                    errDiv.style.display = "block";
+                });
+        } else {
+            errDiv.innerText = "Incorrect PIN ❌. Access Denied!";
+            errDiv.style.display = "block";
+            pinInput.value = "";
+        }
+    }
 
-        const selectedMonth = document.getElementById('monthFilter').value; 
-        const [year, month] = selectedMonth.split("-");
-        const daysInMonth = new Date(year, month, 0).getDate(); 
+    window.fetchVariety = async function(inputElement) {
+        const plantCode = inputElement.value.trim().toUpperCase();
+        const card = inputElement.closest('.item-card');
+        const varietyInput = card.querySelector('.field-variety');
+        
+        const mBottles = card.querySelector('.field-multy-bottles');
+        const rBottles = card.querySelector('.field-rooting-bottles');
+        
+        const mMain = card.querySelector('.field-multy');
+        const rMain = card.querySelector('.field-rooting');
+        
+        const lblMulty = card.querySelector('.lbl-multy');
+        const lblRooting = card.querySelector('.lbl-rooting');
 
-        const tzOffset = (new Date()).getTimezoneOffset() * 60000;
-        const localISODate = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
-
-        let monthlyTemplate = {};
-        for (let d = 1; d <= daysInMonth; d++) {
-            let dayStr = d < 10 ? `0${d}` : `${d}`;
-            monthlyTemplate[`${selectedMonth}-${dayStr}`] = []; 
+        if (plantCode === "") {
+            varietyInput.value = "";
+            card.classList.remove('is-banana');
+            mBottles.required = rBottles.required = true;
+            mMain.placeholder = "Enter Multy amount"; rMain.placeholder = "Enter Rooting amount";
+            lblMulty.innerText = "Multy :"; lblRooting.innerText = "Rooting :";
+            return;
         }
 
-        db.collection("Production_Records").orderBy("timestamp", "asc").get()
-        .then((querySnapshot) => {
-            tableBody.innerHTML = ""; 
-            
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                if (data.operator === selectedOperator && data.date && monthlyTemplate[data.date] !== undefined) {
-                    monthlyTemplate[data.date].push(data); 
-                }
-            });
-            
-            for (let dateKey in monthlyTemplate) {
-                const recordsArray = monthlyTemplate[dateKey]; 
-                const dayNumber = dateKey.split("-")[2]; 
+        if (plantCode.startsWith('B')) {
+            card.classList.add('is-banana');
+            mBottles.required = rBottles.required = false;
+            mBottles.value = rBottles.value = "";
+            mMain.placeholder = "Enter Qty (x10)";
+            rMain.placeholder = "Enter Qty (x10)";
+            lblMulty.innerText = "Multy Qty (x10) :";
+            lblRooting.innerText = "Rooting Qty (x10) :";
+        } else {
+            card.classList.remove('is-banana');
+            mBottles.required = rBottles.required = true;
+            mMain.placeholder = "Enter Multy amount";
+            rMain.placeholder = "Enter Rooting amount";
+            lblMulty.innerText = "Multy :";
+            lblRooting.innerText = "Rooting :";
+        }
 
-                if (recordsArray.length > 0) {
-                    recordsArray.forEach((record, index) => {
-                        let row = `<tr class="filled-row">`;
-                        
-                        if (index === 0) {
-                            row += `<td rowspan="${recordsArray.length}" style="vertical-align: middle; color: #333; background-color: #ffffff;"><b>${dayNumber}</b></td>`;
-                        }
-                        
-                        row += `
-                            <td>${record.plantCode || '-'}</td>
-                            <td style="text-align:left; white-space: normal; word-break: break-word;">${record.variety || '-'}</td>
-                            <td>${record.wk || '0'}</td>
-                            <td>${record.transfer || '0'}</td>
-                            <td>${record.used || '0'}</td>
-                            <td>${record.multy || '0'}</td>
-                            <td>${record.rooting || '0'}</td>
-                            <td style="text-align:left; white-space: normal; word-break: break-word;">${record.remarks ? record.remarks : '-'}</td>
-                        </tr>`;
-                        tableBody.innerHTML += row;
-                    });
-                } else {
-                    if (dateKey < localISODate) {
-                        tableBody.innerHTML += `<tr class="empty-row">
-                            <td><b>${dayNumber}</b></td>
-                            <td colspan="8" style="text-align: center; font-weight: bold; color: #777; background-color: #f8f9fa;">Holiday / No Data</td>
-                        </tr>`;
-                    } else {
-                        tableBody.innerHTML += `<tr class="empty-row">
-                            <td><b>${dayNumber}</b></td>
-                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                        </tr>`;
-                    }
-                }
+        try {
+            const docRef = db.collection("Plants").doc(plantCode);
+            const docSnap = await docRef.get();
+
+            if (docSnap.exists) {
+                varietyInput.value = docSnap.data().varietyName;
+                varietyInput.style.borderColor = "#00875a";
+            } else {
+                varietyInput.value = "Unknown Code ❌";
+                varietyInput.style.borderColor = "#d9534f";
             }
-        })
-        .catch((error) => {
-            tableBody.innerHTML = `<tr><td colspan="9" style="color: red; text-align:center;">Error loading data: ${error.message}</td></tr>`;
-        });
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
+    function updateCardNumbers() {
+        const cards = document.getElementsByClassName('item-card');
+        for (let i = 0; i < cards.length; i++) {
+            cards[i].querySelector('.item-card-title').innerText = `Production Item #${i + 1}`;
+        }
     }
+
+    document.getElementById('btnAddRow').addEventListener('click', () => {
+        const container = document.getElementById('dynamicRowsContainer');
+        const newCard = document.createElement('div');
+        newCard.className = 'item-card';
+        newCard.innerHTML = `
+            <div class="item-card-header">
+                <span class="item-card-title">Production Item</span>
+                <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
+            </div>
+            <div class="form-group">
+                <label>Plant Code :</label>
+                <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
+            </div>
+            <div class="form-group">
+                <label>Variety :</label>
+                <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
+            </div>
+            <div class="form-group">
+                <label>WK :</label>
+                <input type="number" class="field-wk" placeholder="Enter WK number" required>
+            </div>
+            <div class="form-group">
+                <label>Transfer :</label>
+                <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
+            </div>
+            <div class="form-group">
+                <label>Used :</label>
+                <input type="number" class="field-used" placeholder="Enter Used quantity" required>
+            </div>
+            <div class="form-group">
+                <label class="lbl-multy">Multy :</label>
+                <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
+            </div>
+            <div class="form-group hide-bottle-box">
+                <label>M-Bottles :</label>
+                <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
+            </div>
+            <div class="form-group">
+                <label class="lbl-rooting">Rooting :</label>
+                <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
+            </div>
+            <div class="form-group hide-bottle-box">
+                <label>R-Bottles :</label>
+                <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
+            </div>
+            <div class="form-group">
+                <label>Remarks :</label>
+                <input type="text" class="field-remarks" placeholder="Add any comments here">
+            </div>
+        `;
+        container.appendChild(newCard);
+        
+        const firstCard = container.querySelector('.item-card');
+        if (firstCard && firstCard.querySelector('.field-plantcode').value.toUpperCase().startsWith('B')) {
+            newCard.querySelector('.field-plantcode').value = firstCard.querySelector('.field-plantcode').value;
+            fetchVariety(newCard.querySelector('.field-plantcode'));
+        }
+        
+        updateCardNumbers();
+    });
+
+    function removeRow(button) {
+        const container = document.getElementById('dynamicRowsContainer');
+        if (container.getElementsByClassName('item-card').length > 1) { 
+            button.closest('.item-card').remove(); 
+            updateCardNumbers();
+        } else { 
+            alert("At least one data item must be kept!"); 
+        }
+    }
+
+    document.getElementById('productionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const activeOp = sessionStorage.getItem("activeOperator");
+
+        if (!activeOp || !auth.currentUser) {
+            alert("Unauthorized Submission 🔒! App session expired. Please re-open the app.");
+            return;
+        }
+
+        const btnSubmit = document.getElementById('btnSubmit');
+        const successBox = document.getElementById('successMessage');
+        const form = document.getElementById('productionForm');
+        
+        const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+        const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+        const currentTimeStr = new Date().toTimeString().split(' ')[0];
+
+        const allCards = document.getElementById('dynamicRowsContainer').getElementsByClassName('item-card');
+        for (let card of allCards) {
+            const varVal = card.querySelector('.field-variety').value;
+            if (varVal === "" || varVal.includes("Unknown Code")) {
+                alert("Please enter valid Plant Codes before submitting!");
+                return;
+            }
+        }
+
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "CHECKING VALIDATION...";
+
+        try {
+            const querySnapshot = await db.collection("Production_Records")
+                .where("operator", "==", activeOp)
+                .where("date", "==", todayStr)
+                .get();
+
+            if (!querySnapshot.empty) {
+                alert(`Already Submitted Today!\nYour profile has already entered data for ${todayStr}.`);
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+                return;
+            }
+
+            btnSubmit.innerText = "SAVING DATA...";
+            const batch = db.batch();
+
+            for (let card of allCards) {
+                const docRef = db.collection("Production_Records").doc();
+                const pCode = card.querySelector('.field-plantcode').value.trim().toUpperCase();
+                const isBanana = pCode.startsWith('B');
+
+                const mM = parseFloat(card.querySelector('.field-multy').value) || 0;
+                const mB = parseFloat(card.querySelector('.field-multy-bottles').value) || 1;
+                
+                const rM = parseFloat(card.querySelector('.field-rooting').value) || 0;
+                const rB = parseFloat(card.querySelector('.field-rooting-bottles').value) || 1;
+
+                let finalMulty = isBanana ? (mM * 10) : (mM * mB);
+                let finalRooting = isBanana ? (rM * 10) : (rM * rB);
+
+                batch.set(docRef, {
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    date: todayStr,
+                    time: currentTimeStr,
+                    operator: activeOp,
+                    plantCode: pCode,
+                    variety: card.querySelector('.field-variety').value,
+                    wk: parseInt(card.querySelector('.field-wk').value),
+                    transfer: parseInt(card.querySelector('.field-transfer').value),
+                    used: parseInt(card.querySelector('.field-used').value),
+                    multy: Math.round(finalMulty),
+                    rooting: Math.round(finalRooting),
+                    remarks: card.querySelector('.field-remarks').value || '-'
+                });
+            }
+
+            await batch.commit();
+            
+            form.style.display = 'none';
+            successBox.style.display = 'block';
+
+            setTimeout(() => {
+                form.reset();
+                document.getElementById('dynamicRowsContainer').innerHTML = `
+                    <div class="item-card">
+                        <div class="item-card-header">
+                            <span class="item-card-title">Production Item #1</span>
+                            <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
+                        </div>
+                        <div class="form-group">
+                            <label>Plant Code :</label>
+                            <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
+                        </div>
+                        <div class="form-group">
+                            <label>Variety :</label>
+                            <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
+                        </div>
+                        <div class="form-group">
+                            <label>WK :</label>
+                            <input type="number" class="field-wk" placeholder="Enter WK number" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Transfer :</label>
+                            <input type="number" class="field-transfer" placeholder="Enter Transfer quantity" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Used :</label>
+                            <input type="number" class="field-used" placeholder="Enter Used quantity" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="lbl-multy">Multy :</label>
+                            <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
+                        </div>
+                        <div class="form-group hide-bottle-box">
+                            <label>M-Bottles :</label>
+                            <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="lbl-rooting">Rooting :</label>
+                            <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
+                        </div>
+                        <div class="form-group hide-bottle-box">
+                            <label>R-Bottles :</label>
+                            <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Remarks :</label>
+                            <input type="text" class="field-remarks" placeholder="Add any comments here">
+                        </div>
+                    </div>
+                `;
+                successBox.style.display = 'none';
+                form.style.display = 'block';
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+                
+                sessionStorage.clear();
+                document.getElementById('loginPin').value = "";
+                document.getElementById('activeOperatorDisplay').innerText = "Not Logged In";
+                document.getElementById('appLoginModal').style.display = 'flex';
+                updateCardNumbers();
+            }, 2500);
+
+        } catch (error) {
+            alert("Error: " + error.message);
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+        }
+    });
 </script>
 </body>
 </html>
