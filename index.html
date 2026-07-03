@@ -20,7 +20,7 @@
         }
         
         .app-wrapper {
-            min-width: 1200px; 
+            min-width: 1250px; 
             margin: 0 auto;
         }
         
@@ -114,16 +114,34 @@
             border: 1px solid #ccc;
         }
 
-        /* Grid Columns: Plant Code, Variety, WK, Transfer, Used, Multy, Multy Bottles, Rooting, Rooting Bottles, Remarks, Action */
-        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 1.1fr 0.8fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 8px; padding: 10px 6px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
-        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 1.1fr 0.8fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 6px; text-align: center; }
+        /* 💡 11-Column Grid Layout: Boxes සහ Headers හරියටම සමානව බෙදා ඇත */
+        .data-row, .row-headers { 
+            display: grid; 
+            grid-template-columns: 0.9fr 1.6fr 0.6fr 0.8fr 0.8fr 1fr 1fr 1fr 1fr 1.6fr 0.5fr; 
+            gap: 8px; 
+            align-items: center; 
+            padding: 10px 8px;
+        }
+        .data-row { background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; margin-bottom: 8px; }
+        .row-headers { font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; text-align: center; }
         
-        /* Banana Code සදහා Layout එක (අමතර Bottles box 2 හැංගෙන විට) */
-        .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.9fr 1.9fr 1.5fr auto; }
-        .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.9fr 1.9fr 1.5fr auto; }
+        /* 💡 Banana (B) සදහා Column 9ක නව Layout එකක් */
+        .data-row.is-banana, .row-headers.is-banana { 
+            grid-template-columns: 0.9fr 1.6fr 0.6fr 0.8fr 0.8fr 2fr 2fr 1.6fr 0.5fr; 
+        }
 
-        .hide-bottle-box { display: block; }
+        .hide-bottle-box { display: block; width: 100%; }
         .is-banana .hide-bottle-box { display: none !important; }
+
+        /* Input field formatting */
+        .data-row input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
 
         .btn-add-row { background-color: #00875a; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
         .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
@@ -176,19 +194,28 @@
                 </div>
                 
                 <div style="margin-top: 20px;">
+                    <!-- 💡 Header Row -->
                     <div id="headerRow" class="row-headers">
-                        <div>Plant Code</div><div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div>
-                        <div>Multy</div><div class="hide-bottle-box">Bottles</div>
-                        <div>Rooting</div><div class="hide-bottle-box">Bottles</div>
-                        <div>Remarks</div><div>Action</div>
+                        <div>Plant Code</div>
+                        <div>Variety</div>
+                        <div>WK</div>
+                        <div>Transfer</div>
+                        <div>Used</div>
+                        <div>Multy</div>
+                        <div class="hide-bottle-box">M-Bottles</div>
+                        <div>Rooting</div>
+                        <div class="hide-bottle-box">R-Bottles</div>
+                        <div>Remarks</div>
+                        <div>Action</div>
                     </div>
                     
+                    <!-- 💡 Dynamic Rows Container -->
                     <div id="dynamicRowsContainer">
                         <div class="data-row">
-                            <input type="text" class="field-plantcode" placeholder="e.g. 1" required oninput="fetchVariety(this)">
+                            <input type="text" class="field-plantcode" placeholder="Code" required oninput="fetchVariety(this)">
                             <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
                             <input type="number" class="field-wk" placeholder="WK" required>
-                            <input type="number" class="field-transfer" placeholder="Transfer" required>
+                            <input type="number" class="field-transfer" placeholder="Trans" required>
                             <input type="number" class="field-used" placeholder="Used" required>
                             
                             <input type="number" class="field-multy" placeholder="Multy" required>
@@ -366,6 +393,8 @@
     function checkHeaderState() {
         const firstRow = document.querySelector('#dynamicRowsContainer .data-row');
         const header = document.getElementById('headerRow');
+        
+        // 💡 පේළි සියල්ලේම headers සහ boxes සමානව Align කිරීමට CSS class එක මාරු කරයි
         if (firstRow && firstRow.classList.contains('is-banana')) {
             header.classList.add('is-banana');
         } else {
@@ -377,10 +406,10 @@
         const newRow = document.createElement('div');
         newRow.className = 'data-row';
         newRow.innerHTML = `
-            <input type="text" class="field-plantcode" placeholder="e.g. 1" required oninput="fetchVariety(this)">
+            <input type="text" class="field-plantcode" placeholder="Code" required oninput="fetchVariety(this)">
             <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
             <input type="number" class="field-wk" placeholder="WK" required>
-            <input type="number" class="field-transfer" placeholder="Transfer" required>
+            <input type="number" class="field-transfer" placeholder="Trans" required>
             <input type="number" class="field-used" placeholder="Used" required>
             <input type="number" class="field-multy" placeholder="Multy" required>
             <input type="number" class="field-multy-bottles hide-bottle-box" placeholder="Bottles" required>
@@ -465,7 +494,6 @@
                 const rM = parseFloat(row.querySelector('.field-rooting').value) || 0;
                 const rB = parseFloat(row.querySelector('.field-rooting-bottles').value) || 1;
 
-                // 💡Calculation Logic: Ornamental සදහා (Multy * Bottles) සහ (Rooting * Bottles) සිදු වේ
                 let finalMulty = isBanana ? (mM * 10) : (mM * mB);
                 let finalRooting = isBanana ? (rM * 10) : (rM * rB);
 
@@ -494,10 +522,10 @@
                 form.reset();
                 document.getElementById('dynamicRowsContainer').innerHTML = `
                     <div class="data-row">
-                        <input type="text" class="field-plantcode" placeholder="e.g. 1" required oninput="fetchVariety(this)">
+                        <input type="text" class="field-plantcode" placeholder="Code" required oninput="fetchVariety(this)">
                         <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
                         <input type="number" class="field-wk" placeholder="WK" required>
-                        <input type="number" class="field-transfer" placeholder="Transfer" required>
+                        <input type="number" class="field-transfer" placeholder="Trans" required>
                         <input type="number" class="field-used" placeholder="Used" required>
                         <input type="number" class="field-multy" placeholder="Multy" required>
                         <input type="number" class="field-multy-bottles hide-bottle-box" placeholder="Bottles" required>
