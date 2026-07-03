@@ -39,7 +39,7 @@
             body { display: none !important; }
         }
 
-        /* 💡 Header එක සෙලවෙන්නේ නැතුව තියෙන්න Container එකේ උඩ පරතරය සකස් කළා */
+        /* 💡 Header එක උඩම ස්ථාවරව තියෙන්න සහ Data Row එක වැහෙන්නේ නැතිවෙන්න padding එක හැදුවා */
         .container { box-sizing: border-box; padding: 10px; padding-top: 195px; }
         .fixed-complete-header { position: fixed; top: 0; left: 0; width: 100%; background-color: #f4f4f9; z-index: 1000; padding: 10px 10px 0 10px; box-sizing: border-box; }
         h2 { text-align: center; color: #28a745; margin: 3px 0; font-size: 18px; }
@@ -52,12 +52,12 @@
         .filter-group label { font-weight: bold; }
         .filter-group select, .filter-group input { padding: 5px 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 12px; }
         
-        /* 💡 Header එක වෙනම තියෙද්දී ඩේටා ටික විතරක් Scroll වෙන්න උස සීමා කළා */
+        /* 💡 Header එක එහෙම්මම ලොක් වෙලා තියෙද්දී ඩේටා ටික විතරක් Scroll වෙන්න සීමාවන් හැදුවා */
         .table-responsive { 
             width: 100%; 
             overflow-x: auto; 
             overflow-y: auto;
-            max-height: calc(100vh - 215px); /* Screen එකේ ඉතිරි කොටසට Scrollbar එක සීමා කලා */
+            max-height: calc(100vh - 215px); /* Screen එකේ ඉතිරි උසට විතරක් Scrollbar එක සීමා කළා */
             border: 1px solid #aaaaaa; 
             background: white; 
             -webkit-overflow-scrolling: touch; 
@@ -71,7 +71,7 @@
         .col-num { width: 65px; }
         .col-rem { width: 150px; }
         
-        /* 💡 සිරස්තල ටේබල් එක හැමවෙලේම උඩින්ම පේන්න හැදුවා */
+        /* 💡 Header Table එක හැමවෙලේම උඩින්ම Sticky වෙලා ලොක් වෙන්න CSS හැදුවා */
         .header-table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -219,7 +219,7 @@
             monthlyTemplate[`${selectedMonth}-${dayStr}`] = []; 
         }
 
-        // 💡 ඔයාගේ මුල්ම Query එක එහෙම්මමයි, වෙනස් කළේ නැහැ.
+        // 💡 ඔයාගේ ඔරිජිනල් Query එක එහෙම්මමයි, වෙනස් කලේ නැහැ.
         db.collection("Production_Records").orderBy("timestamp", "asc").get()
         .then((querySnapshot) => {
             tableBody.innerHTML = ""; 
