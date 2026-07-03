@@ -141,7 +141,6 @@
             font-size: 16px;
         }
 
-        /* 💡 {211B2909-25F3-466B-A17C-1EAD7150D418}.png එකේ විදිහටම සකස් කළ Input fields */
         .form-group {
             margin-bottom: 20px;
         }
@@ -158,7 +157,7 @@
             width: 100%;
             padding: 12px 14px;
             border: 1px solid #cccccc;
-            border-radius: 6px; /* 💡 කොන් රවුම් වුණු බෝඩර් එක */
+            border-radius: 6px;
             box-sizing: border-box;
             font-size: 15px;
             background: #ffffff;
@@ -166,7 +165,6 @@
             transition: border-color 0.2s;
         }
         
-        /* Box එකක් ඇතුලට ක්ලික් කළහම වෙනස් වෙන විදිහ */
         .form-group input:focus {
             border-color: #00875a;
             outline: none;
@@ -180,7 +178,6 @@
             font-weight: bold;
         }
 
-        /* Banana සඟවන කොටස */
         .hide-bottle-box { display: block; }
         .is-banana .hide-bottle-box { display: none !important; }
 
@@ -314,6 +311,7 @@
 <script>
     const overlay = document.getElementById('securityOverlay');
 
+    // Security Features
     function triggerBlackout() {
         overlay.style.display = 'block';
         setTimeout(() => { overlay.style.display = 'none'; }, 1500);
@@ -340,6 +338,7 @@
         e.preventDefault();
     });
 
+    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBRLKdJqdC4kwT4qPvHBPjf1vX2viSBxqg",
         authDomain: "teal-lanka-daily-production.firebaseapp.com",
@@ -352,6 +351,7 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
+    // 🔒 මෙතනින් සියලුම Operatorවරුන්ගේ PIN අංකය 2016 ලෙස ස්ථිර කර ඇත.
     const operatorPins = {
         "Operator 1": "2016",
         "Operator 2": "2016",
