@@ -19,9 +19,8 @@
             overflow-x: auto;
         }
         
-        /* Force App Layout for Landscape Preference */
         .app-wrapper {
-            min-width: 1200px; /* Ensures table layout remains clean without shrinking */
+            min-width: 1200px; 
             margin: 0 auto;
         }
         
@@ -31,7 +30,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9);
             z-index: 999999;
-            display: flex;
+            display: none; /* Controlled via JS Session */
             justify-content: center;
             align-items: center;
         }
@@ -68,7 +67,6 @@
         .modal-box button:hover { background: #006644; }
         .error-text { color: red; font-size: 13px; margin-top: 5px; display: none; font-weight: bold; }
 
-        /* Security Blackout Overlay */
         #securityOverlay {
             display: none;
             position: fixed;
@@ -98,7 +96,6 @@
         .form-body { padding: 0 15px; }
         label { font-weight: bold; display: block; margin-top: 10px; color: #2c3e50; font-size: 14px; }
         
-        /* Horizontally optimized inputs */
         .operator-display-box {
             background: #e9ecef;
             padding: 10px 15px;
@@ -128,7 +125,7 @@
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
 
-<!-- App Initialization Login Modal (ඇප් එකට එද්දීම වැටෙන එක) -->
+<!-- Login Modal -->
 <div id="appLoginModal">
     <div class="modal-box">
         <h3>Teal Lanka Login</h3>
@@ -142,7 +139,7 @@
             <option value="Operator 4">Operator QST</option>
         </select>
         
-        <input type="password" id="loginPin" placeholder="Enter 4-Digit Secret PIN" pattern="[0-9]*" inputmode="numeric">
+        <input type="password" id="loginPin" placeholder="Enter Secret PIN">
         <button type="button" onclick="initializeAppSession()">Login & Open App</button>
         <div id="loginErrorAlert" class="error-text">Incorrect PIN. Access Denied!</div>
     </div>
@@ -150,7 +147,6 @@
 
 <div id="securityOverlay">🔒 Screen Capture Restricted!</div>
 
-<!-- Horizontal App Container Wrapper -->
 <div class="app-wrapper">
     <div class="nav-links">
         <a href="index.html" class="active">Data Entry Form</a>
@@ -167,7 +163,6 @@
             <form id="productionForm">
                 <div>
                     <label>Active Operator Account</label>
-                    <!-- ලොගින් වුණාට පස්සේ කවුද කියලා බලාගන්න විතරක් පේන්න හදපු කොටස -->
                     <div id="activeOperatorDisplay" class="operator-display-box">Not Logged In</div>
                 </div>
                 
@@ -252,7 +247,6 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // Operators Secret PINs Definition
     const operatorPins = {
         "Operator 1": "17Ec9F9F@1",
         "Operator 2": "17Ec9F9F@2",
@@ -260,10 +254,21 @@
         "Operator 4": "17Ec9F9F@4" 
     };
 
-    let isUserAuthenticated = false;
-    let globalActiveOperator = "";
+    // Session Check (පිටු අතර මාරු වෙද්දී ප්‍රශ්නයක් නොවෙන්න)
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedOperator = sessionStorage.getItem("activeOperator");
+        const savedOpText = sessionStorage.getItem("activeOperatorText");
+        
+        if (savedOperator && savedOpText) {
+            auth.signInAnonymously().then(() => {
+                document.getElementById('activeOperatorDisplay').innerText = `Logged In: ${savedOpText} ✅`;
+                document.getElementById('appLoginModal').style.display = 'none';
+            });
+        } else {
+            document.getElementById('appLoginModal').style.display = 'flex';
+        }
+    });
 
-    // App එක මුලින්ම ලෝඩ් වෙද්දී වැඩ කරන ලොගින් සිස්ටම් එක
     function initializeAppSession() {
         const selectElement = document.getElementById('loginOperator');
         const pinInput = document.getElementById('loginPin');
@@ -278,30 +283,28 @@
             return;
         }
 
-        if (enteredPin === operatorPins[selectedOp]) {
+        // Case-Insensitive (Capital/Simple ප්‍රශ්නයක් නොවෙන්න .toUpperCase() භාවිතය)
+        if (enteredPin.toUpperCase() === operatorPins[selectedOp].toUpperCase()) {
             auth.signInAnonymously()
                 .then(() => {
-                    isUserAuthenticated = true;
-                    globalActiveOperator = selectedOp;
-                    
-                    // Display එකට Operator ගේ නම දානවා
                     const opText = selectElement.options[selectElement.selectedIndex].text;
-                    document.getElementById('activeOperatorDisplay').innerText = `Logged In: ${opText} ✅`;
                     
-                    // Modal එක වහලා දානවා
+                    // Save to Session Storage
+                    sessionStorage.setItem("activeOperator", selectedOp);
+                    sessionStorage.setItem("activeOperatorText", opText);
+                    
+                    document.getElementById('activeOperatorDisplay').innerText = `Logged In: ${opText} ✅`;
                     document.getElementById('appLoginModal').style.display = 'none';
                     errDiv.style.display = "none";
                 })
                 .catch((err) => {
                     errDiv.innerText = "Security Connection Failed: " + err.message;
                     errDiv.style.display = "block";
-                    isUserAuthenticated = false;
                 });
         } else {
             errDiv.innerText = "Incorrect PIN ❌. Access Denied!";
             errDiv.style.display = "block";
             pinInput.value = "";
-            isUserAuthenticated = false;
         }
     }
 
@@ -408,8 +411,9 @@
 
     document.getElementById('productionForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+        const activeOp = sessionStorage.getItem("activeOperator");
 
-        if (!isUserAuthenticated || !auth.currentUser || !globalActiveOperator) {
+        if (!activeOp || !auth.currentUser) {
             alert("Unauthorized Submission 🔒! App session expired. Please re-open the app.");
             return;
         }
@@ -436,7 +440,7 @@
 
         try {
             const querySnapshot = await db.collection("Production_Records")
-                .where("operator", "==", globalActiveOperator)
+                .where("operator", "==", activeOp)
                 .where("date", "==", todayStr)
                 .get();
 
@@ -470,7 +474,7 @@
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     date: todayStr,
                     time: currentTimeStr,
-                    operator: globalActiveOperator,
+                    operator: activeOp,
                     plantCode: pCode,
                     variety: row.querySelector('.field-variety').value,
                     wk: parseInt(row.querySelector('.field-wk').value),
@@ -512,9 +516,8 @@
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
                 
-                // Submit වුණාට පස්සේ ආයේ App එක මුලටම (ලොගින් එකට) යනවා සෙකියුරිටි එකට
-                isUserAuthenticated = false;
-                globalActiveOperator = "";
+                // Clear session on successful submission so it asks PIN next time app opens
+                sessionStorage.clear();
                 document.getElementById('loginPin').value = "";
                 document.getElementById('activeOperatorDisplay').innerText = "Not Logged In";
                 document.getElementById('appLoginModal').style.display = 'flex';
