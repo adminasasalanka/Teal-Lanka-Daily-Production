@@ -2,28 +2,79 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Teal Lanka - Data Entry Form</title>
     <style>
-        /* Security Fix: Prevent Selection and Copying */
-        body { 
+        /* Security & Landscape Orientation Setup */
+        html, body { 
             font-family: Arial, sans-serif; 
-            margin: 20px; 
+            margin: 0; 
+            padding: 10px;
             background-color: #f4f4f9; 
             color: #333; 
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none;    /* Firefox */
-            -ms-user-select: none;     /* IE10+ */
-            user-select: none;         /* Standard */
+            -webkit-user-select: none;
+            -moz-user-select: none; 
+            -ms-user-select: none; 
+            user-select: none;
+            overflow-x: auto;
         }
         
+        /* Force App Layout for Landscape Preference */
+        .app-wrapper {
+            min-width: 1200px; /* Ensures table layout remains clean without shrinking */
+            margin: 0 auto;
+        }
+        
+        /* App Initialization Password Modal */
+        #appLoginModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            max-width: 340px;
+            width: 90%;
+        }
+        .modal-box h3 { margin-top: 0; color: #00875a; font-size: 22px; }
+        .modal-box select, .modal-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        .modal-box button {
+            background: #00875a;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+        }
+        .modal-box button:hover { background: #006644; }
+        .error-text { color: red; font-size: 13px; margin-top: 5px; display: none; font-weight: bold; }
+
         /* Security Blackout Overlay */
         #securityOverlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #000000;
-            z-index: 999999;
+            z-index: 888888;
             color: white;
             text-align: center;
             padding-top: 50vh;
@@ -36,20 +87,31 @@
             body { display: none !important; }
         }
 
-        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; list-style: none; padding: 0; }
+        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; list-style: none; padding: 0; }
         .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
         .nav-links a.active { background: #00875a; }
-        .container { max-width: 1350px; margin: auto; background: white; padding: 0 0 30px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border-top: 6px solid #00875a; }
-        .form-header { text-align: center; padding: 20px 10px 5px 10px; }
-        .form-header h2 { margin: 0; color: #2c3e50; font-size: 26px; font-weight: bold; }
-        .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 14px; }
-        .divider { height: 2px; background-color: #00875a; margin: 15px 30px; }
-        .form-body { padding: 0 20px; }
-        label { font-weight: bold; display: block; margin-top: 15px; color: #2c3e50; font-size: 14px; }
-        input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        .container { background: white; padding: 0 0 20px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border-top: 6px solid #00875a; }
+        .form-header { text-align: center; padding: 15px 10px 5px 10px; }
+        .form-header h2 { margin: 0; color: #2c3e50; font-size: 24px; font-weight: bold; }
+        .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 13px; }
+        .divider { height: 2px; background-color: #00875a; margin: 10px 20px; }
+        .form-body { padding: 0 15px; }
+        label { font-weight: bold; display: block; margin-top: 10px; color: #2c3e50; font-size: 14px; }
         
-        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 8px; align-items: center; margin-bottom: 10px; padding: 12px 8px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
-        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 8px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 8px; text-align: center; }
+        /* Horizontally optimized inputs */
+        .operator-display-box {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #00875a;
+            display: inline-block;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .data-row { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; align-items: center; margin-bottom: 8px; padding: 10px 6px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; }
+        .row-headers { display: grid; grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.8fr 0.8fr 1.5fr auto; gap: 6px; font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; padding: 0 6px; text-align: center; }
         
         .data-row.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 2.4fr 1.5fr auto; }
         .row-headers.is-banana { grid-template-columns: 1fr 1.5fr 0.6fr 0.7fr 0.7fr 2.4fr 2.4fr 1.5fr auto; }
@@ -59,85 +121,102 @@
 
         .btn-add-row { background-color: #00875a; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
         .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-submit { width: 100%; padding: 14px; background-color: #2575fc; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; }
-        .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 30px 0 30px; font-weight: bold; border: 2px solid #c3e6cb; }
+        .btn-submit { width: 100%; padding: 14px; background-color: #2575fc; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px; font-weight: bold; border: 2px solid #c3e6cb; }
         .field-variety { background-color: #e9ecef; color: #495057; cursor: not-allowed; font-weight: bold; }
     </style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
 
-<div id="securityOverlay">🔒 Screen Capture Restricted!</div>
-
-<div class="nav-links">
-    <a href="index.html" class="active">Data Entry Form</a>
-    <a href="operator1.html">View Monthly Books</a>
+<!-- App Initialization Login Modal (ඇප් එකට එද්දීම වැටෙන එක) -->
+<div id="appLoginModal">
+    <div class="modal-box">
+        <h3>Teal Lanka Login</h3>
+        <p style="font-size: 13px; color: #666; margin: 0 0 10px 0;">Select your operator profile and PIN</p>
+        
+        <select id="loginOperator">
+            <option value="" disabled selected hidden>Choose Operator</option>
+            <option value="Operator 1">Operator RS</option>
+            <option value="Operator 2">Operator TK</option>
+            <option value="Operator 3">Operator K</option>
+            <option value="Operator 4">Operator QST</option>
+        </select>
+        
+        <input type="password" id="loginPin" placeholder="Enter 4-Digit Secret PIN" pattern="[0-9]*" inputmode="numeric">
+        <button type="button" onclick="initializeAppSession()">Login & Open App</button>
+        <div id="loginErrorAlert" class="error-text">Incorrect PIN. Access Denied!</div>
+    </div>
 </div>
 
-<div class="container">
-    <div class="form-header">
-        <h2>Teal Lanka Bio Tech</h2>
-        <p>Production Data Entry Form</p>
+<div id="securityOverlay">🔒 Screen Capture Restricted!</div>
+
+<!-- Horizontal App Container Wrapper -->
+<div class="app-wrapper">
+    <div class="nav-links">
+        <a href="index.html" class="active">Data Entry Form</a>
+        <a href="operator1.html">View Monthly Books</a>
     </div>
-    <div class="divider"></div>
-    <div class="form-body">
-        <form id="productionForm">
-            <div style="max-width: 300px;">
-                <label for="operator">Operator Code</label>
-                <select id="operator" required onchange="verifyOperatorPin(this)">
-                    <option value="" disabled selected hidden>Select Operator</option>
-                    <option value="Operator 1">Operator RS</option>
-                    <option value="Operator 2">Operator TK</option>
-                    <option value="Operator 3">Operator K</option>
-                    <option value="Operator 4">Operator QST</option>
-                </select>
-            </div>
-            
-            <div style="margin-top: 25px; overflow-x: auto;">
-                <div id="headerRow" class="row-headers">
-                    <div>Plant Code</div><div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div>
-                    <div>Multy</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
-                    <div>Rooting</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
-                    <div>Remarks</div><div>Action</div>
+
+    <div class="container">
+        <div class="form-header">
+            <h2>Teal Lanka Bio Tech</h2>
+            <p>Production Data Entry Form (Landscape Optimized Mode)</p>
+        </div>
+        <div class="divider"></div>
+        <div class="form-body">
+            <form id="productionForm">
+                <div>
+                    <label>Active Operator Account</label>
+                    <!-- ලොගින් වුණාට පස්සේ කවුද කියලා බලාගන්න විතරක් පේන්න හදපු කොටස -->
+                    <div id="activeOperatorDisplay" class="operator-display-box">Not Logged In</div>
                 </div>
                 
-                <div id="dynamicRowsContainer">
-                    <div class="data-row">
-                        <input type="text" class="field-plantcode" placeholder="e.g. 1" required oninput="fetchVariety(this)">
-                        <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
-                        <input type="number" class="field-wk" placeholder="WK" required>
-                        <input type="number" class="field-transfer" placeholder="Transfer" required>
-                        <input type="number" class="field-used" placeholder="Used" required>
-                        
-                        <input type="number" class="field-multy" placeholder="Multy" required>
-                        <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
-                        <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
-                        
-                        <input type="number" class="field-rooting" placeholder="Rooting" required>
-                        <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
-                        <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
-                        
-                        <input type="text" class="field-remarks" placeholder="Remarks">
-                        <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
+                <div style="margin-top: 20px;">
+                    <div id="headerRow" class="row-headers">
+                        <div>Plant Code</div><div>Variety</div><div>WK</div><div>Transfer</div><div>Used</div>
+                        <div>Multy</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
+                        <div>Rooting</div><div class="hide-banana-box">Bottles</div><div class="hide-banana-box">Plants</div>
+                        <div>Remarks</div><div>Action</div>
                     </div>
+                    
+                    <div id="dynamicRowsContainer">
+                        <div class="data-row">
+                            <input type="text" class="field-plantcode" placeholder="e.g. 1" required oninput="fetchVariety(this)">
+                            <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
+                            <input type="number" class="field-wk" placeholder="WK" required>
+                            <input type="number" class="field-transfer" placeholder="Transfer" required>
+                            <input type="number" class="field-used" placeholder="Used" required>
+                            
+                            <input type="number" class="field-multy" placeholder="Multy" required>
+                            <input type="number" class="field-multy-bottles hide-banana-box" placeholder="Bottles" required>
+                            <input type="number" class="field-multy-plants hide-banana-box" placeholder="Plants" required>
+                            
+                            <input type="number" class="field-rooting" placeholder="Rooting" required>
+                            <input type="number" class="field-rooting-bottles hide-banana-box" placeholder="Bottles" required>
+                            <input type="number" class="field-rooting-plants hide-banana-box" placeholder="Plants" required>
+                            
+                            <input type="text" class="field-remarks" placeholder="Remarks">
+                            <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-row" id="btnAddRow">+ Add Item Row</button>
                 </div>
-                <button type="button" class="btn-add-row" id="btnAddRow">+ Add Item Row</button>
-            </div>
-            <button type="submit" class="btn-submit" id="btnSubmit">SUBMIT PRODUCTION DATA</button>
-        </form>
+                <button type="submit" class="btn-submit" id="btnSubmit">SUBMIT PRODUCTION DATA</button>
+            </form>
+        </div>
+        <div id="successMessage" class="success-box">Thank You!<br><span style="font-size: 14px; font-weight: normal;">Your Production Data Has Been Submitted Successfully.</span></div>
     </div>
-    <div id="successMessage" class="success-box">Thank You!<br><span style="font-size: 14px; font-weight: normal;">Your Production Data Has Been Submitted Successfully.</span></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
-    // Robust WebIntoApp Security Controls
     const overlay = document.getElementById('securityOverlay');
 
     function triggerBlackout() {
         overlay.style.display = 'block';
-        setTimeout(() => { overlay.style.display = 'none'; }, 1500); // 1.5 seconds blackout
+        setTimeout(() => { overlay.style.display = 'none'; }, 1500);
     }
 
     document.addEventListener('visibilitychange', () => { if (document.hidden) triggerBlackout(); });
@@ -173,40 +252,58 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // 🔑 Operators Secret PINs Definition
+    // Operators Secret PINs Definition
     const operatorPins = {
-        "Operator 1": "17Ec9F9F@1", // Operator RS
-        "Operator 2": "17Ec9F9F@2", // Operator TK
-        "Operator 3": "17Ec9F9F@3", // Operator K
-        "Operator 4": "17Ec9F9F@4"  // Operator QST
+        "Operator 1": "17Ec9F9F@1",
+        "Operator 2": "17Ec9F9F@2",
+        "Operator 3": "17Ec9F9F@3",
+        "Operator 4": "17Ec9F9F@4" 
     };
 
     let isUserAuthenticated = false;
+    let globalActiveOperator = "";
 
-    // Verify Operator PIN on Selection Change
-    window.verifyOperatorPin = async function(selectElement) {
+    // App එක මුලින්ම ලෝඩ් වෙද්දී වැඩ කරන ලොගින් සිස්ටම් එක
+    function initializeAppSession() {
+        const selectElement = document.getElementById('loginOperator');
+        const pinInput = document.getElementById('loginPin');
+        const errDiv = document.getElementById('loginErrorAlert');
+
         const selectedOp = selectElement.value;
-        const correctPin = operatorPins[selectedOp];
-        
-        const enterPin = prompt(`Enter Secret PIN for ${selectElement.options[selectElement.selectedIndex].text}:`);
-        
-        if (enterPin === correctPin) {
-            try {
-                // Firebase Security Authentication
-                await auth.signInAnonymously();
-                isUserAuthenticated = true;
-                alert("Access Granted 🔓. Secure Connection Established.");
-            } catch (err) {
-                alert("Security Connection Failed: " + err.message);
-                selectElement.value = "";
-                isUserAuthenticated = false;
-            }
+        const enteredPin = pinInput.value;
+
+        if(!selectedOp) {
+            errDiv.innerText = "Please choose an operator profile first!";
+            errDiv.style.display = "block";
+            return;
+        }
+
+        if (enteredPin === operatorPins[selectedOp]) {
+            auth.signInAnonymously()
+                .then(() => {
+                    isUserAuthenticated = true;
+                    globalActiveOperator = selectedOp;
+                    
+                    // Display එකට Operator ගේ නම දානවා
+                    const opText = selectElement.options[selectElement.selectedIndex].text;
+                    document.getElementById('activeOperatorDisplay').innerText = `Logged In: ${opText} ✅`;
+                    
+                    // Modal එක වහලා දානවා
+                    document.getElementById('appLoginModal').style.display = 'none';
+                    errDiv.style.display = "none";
+                })
+                .catch((err) => {
+                    errDiv.innerText = "Security Connection Failed: " + err.message;
+                    errDiv.style.display = "block";
+                    isUserAuthenticated = false;
+                });
         } else {
-            alert("Incorrect PIN ❌. Access Denied!");
-            selectElement.value = "";
+            errDiv.innerText = "Incorrect PIN ❌. Access Denied!";
+            errDiv.style.display = "block";
+            pinInput.value = "";
             isUserAuthenticated = false;
         }
-    };
+    }
 
     window.fetchVariety = async function(inputElement) {
         const plantCode = inputElement.value.trim().toUpperCase();
@@ -312,15 +409,14 @@
     document.getElementById('productionForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        if (!isUserAuthenticated || !auth.currentUser) {
-            alert("Unauthorized Submission 🔒! Please select an operator and enter the correct PIN.");
+        if (!isUserAuthenticated || !auth.currentUser || !globalActiveOperator) {
+            alert("Unauthorized Submission 🔒! App session expired. Please re-open the app.");
             return;
         }
 
         const btnSubmit = document.getElementById('btnSubmit');
         const successBox = document.getElementById('successMessage');
         const form = document.getElementById('productionForm');
-        const selectedOperator = document.getElementById('operator').value;
         
         const tzOffset = (new Date()).getTimezoneOffset() * 60000;
         const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
@@ -340,12 +436,12 @@
 
         try {
             const querySnapshot = await db.collection("Production_Records")
-                .where("operator", "==", selectedOperator)
+                .where("operator", "==", globalActiveOperator)
                 .where("date", "==", todayStr)
                 .get();
 
             if (!querySnapshot.empty) {
-                alert(`Already Submitted Today!\n${selectedOperator} has already entered data for ${todayStr}.`);
+                alert(`Already Submitted Today!\nYour profile has already entered data for ${todayStr}.`);
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
                 return;
@@ -374,7 +470,7 @@
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     date: todayStr,
                     time: currentTimeStr,
-                    operator: selectedOperator,
+                    operator: globalActiveOperator,
                     plantCode: pCode,
                     variety: row.querySelector('.field-variety').value,
                     wk: parseInt(row.querySelector('.field-wk').value),
@@ -388,10 +484,6 @@
 
             await batch.commit();
             
-            // Sign out from Firebase Auth for security
-            await auth.signOut();
-            isUserAuthenticated = false;
-
             form.style.display = 'none';
             successBox.style.display = 'block';
 
@@ -419,6 +511,13 @@
                 form.style.display = 'block';
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
+                
+                // Submit වුණාට පස්සේ ආයේ App එක මුලටම (ලොගින් එකට) යනවා සෙකියුරිටි එකට
+                isUserAuthenticated = false;
+                globalActiveOperator = "";
+                document.getElementById('loginPin').value = "";
+                document.getElementById('activeOperatorDisplay').innerText = "Not Logged In";
+                document.getElementById('appLoginModal').style.display = 'flex';
             }, 2500);
 
         } catch (error) {
