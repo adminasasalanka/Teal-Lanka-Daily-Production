@@ -87,11 +87,22 @@
         td[rowspan] { position: sticky; left: 0; background-color: #ffffff !important; z-index: 5; font-weight: bold; }
         .filled-row { background-color: #e8f5e9; font-weight: bold; color: #1b5e20; }
         .empty-row { background-color: #ffffff; color: #333; }
-    </style>
+    
+
+/* Rotate popup */
+#rotatePopup{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;justify-content:center;align-items:center;z-index:9999999}
+.rotate-box{text-align:center;color:#fff;padding:20px}
+.phone-icon{font-size:70px;display:inline-block;animation:rotatePhone 1.5s ease-in-out infinite}
+@keyframes rotatePhone{0%{transform:rotate(0)}40%,60%{transform:rotate(90deg)}100%{transform:rotate(0)}}
+
+</style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
 
 <div id="securityOverlay">🔒 Screen Capture Restricted!</div>
+
+<div id="rotatePopup"><div class="rotate-box"><div class="phone-icon">📱</div><h2>Rotate Your Screen</h2><p>Please rotate your device to landscape mode.</p></div></div>
+
 
 <div class="fixed-complete-header">
     <div class="nav-links">
@@ -148,8 +159,28 @@
     </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+function checkOrientation(){
+ const p=document.getElementById('rotatePopup');
+ if(window.innerWidth<900 && window.innerHeight>window.innerWidth){p.style.display='flex';}
+ else{p.style.display='none';}
+}
+window.addEventListener('load',checkOrientation);
+window.addEventListener('resize',checkOrientation);
+window.addEventListener('orientationchange',checkOrientation);
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
+function checkOrientation(){
+ const p=document.getElementById('rotatePopup');
+ if(window.innerWidth<900 && window.innerHeight>window.innerWidth){p.style.display='flex';}
+ else{p.style.display='none';}
+}
+window.addEventListener('load',checkOrientation);
+window.addEventListener('resize',checkOrientation);
+window.addEventListener('orientationchange',checkOrientation);
+
+</script>
 <script>
     // Robust WebIntoApp Security Controls
     const overlay = document.getElementById('securityOverlay');
@@ -274,6 +305,16 @@
             tableBody.innerHTML = `<tr><td colspan="9" style="color: red; text-align:center;">Error loading data: ${error.message}</td></tr>`;
         });
     }
+
+function checkOrientation(){
+ const p=document.getElementById('rotatePopup');
+ if(window.innerWidth<900 && window.innerHeight>window.innerWidth){p.style.display='flex';}
+ else{p.style.display='none';}
+}
+window.addEventListener('load',checkOrientation);
+window.addEventListener('resize',checkOrientation);
+window.addEventListener('orientationchange',checkOrientation);
+
 </script>
 </body>
 </html>
