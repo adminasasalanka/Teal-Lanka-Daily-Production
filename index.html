@@ -44,6 +44,7 @@
             width: 90%;
         }
         .modal-box h3 { margin-top: 0; color: #00875a; font-size: 22px; }
+        
         .modal-box select, .modal-box input {
             width: 100%;
             padding: 12px;
@@ -53,6 +54,13 @@
             box-sizing: border-box;
             font-size: 15px;
         }
+
+        /* PIN Input එක Text එකක් වුණත් අකුරු රවුම් තිත් වලින් සඟවන්න */
+        #loginPin {
+            -webkit-text-security: disc !important;
+            text-security: disc !important;
+        }
+
         .modal-box button {
             background: #00875a;
             color: white;
@@ -125,7 +133,6 @@
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
 
-<!-- Login Modal -->
 <div id="appLoginModal">
     <div class="modal-box">
         <h3>Teal Lanka Login</h3>
@@ -139,7 +146,7 @@
             <option value="Operator 4">Operator QST</option>
         </select>
         
-        <input type="password" id="loginPin" placeholder="Enter Secret PIN">
+        <input type="text" id="loginPin" placeholder="Enter Secret PIN" autocomplete="off">
         <button type="button" onclick="initializeAppSession()">Login & Open App</button>
         <div id="loginErrorAlert" class="error-text">Incorrect PIN. Access Denied!</div>
     </div>
@@ -247,6 +254,7 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
+    // 💡 මෙතන තියෙන්නේ ඔයාගේ Operators ලගේ PIN ටිකයි. ඔයාට අවශ්‍ය පරිදි වෙනස් කරගන්න.
     const operatorPins = {
         "Operator 1": "17Ec9F9F@1",
         "Operator 2": "17Ec9F9F@2",
@@ -254,7 +262,7 @@
         "Operator 4": "17Ec9F9F@4" 
     };
 
-    // Session Check (පිටු අතර මාරු වෙද්දී ප්‍රශ්නයක් නොවෙන්න)
+    // Dashboard සහ Books අතර මාරු වෙද්දී ආයෙත් PIN ඉල්ලීම වැළැක්වීමට Session Check එක
     document.addEventListener("DOMContentLoaded", () => {
         const savedOperator = sessionStorage.getItem("activeOperator");
         const savedOpText = sessionStorage.getItem("activeOperatorText");
@@ -283,13 +291,13 @@
             return;
         }
 
-        // Case-Insensitive (Capital/Simple ප්‍රශ්නයක් නොවෙන්න .toUpperCase() භාවිතය)
+        // .toUpperCase() මඟින් Simple/Capital ඕනෑම එකකින් ගැහුවත් Login වීමට ඉඩ සලසයි
         if (enteredPin.toUpperCase() === operatorPins[selectedOp].toUpperCase()) {
             auth.signInAnonymously()
                 .then(() => {
                     const opText = selectElement.options[selectElement.selectedIndex].text;
                     
-                    // Save to Session Storage
+                    // Session එක මතක තබා ගැනීම
                     sessionStorage.setItem("activeOperator", selectedOp);
                     sessionStorage.setItem("activeOperatorText", opText);
                     
@@ -516,7 +524,7 @@
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "SUBMIT PRODUCTION DATA";
                 
-                // Clear session on successful submission so it asks PIN next time app opens
+                // දත්ත Submit කළ පසු ආරක්ෂාව සඳහා session එක clear කර නැවත PIN ඉල්ලන තත්ත්වයට පත් කරයි
                 sessionStorage.clear();
                 document.getElementById('loginPin').value = "";
                 document.getElementById('activeOperatorDisplay').innerText = "Not Logged In";
