@@ -44,7 +44,7 @@ jobs:
         cordova build android --device
 
     - name: Upload APK Package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: TealLanka-Screenshot-Blocked-APK
         path: teallanka/platforms/android/app/build/outputs/apk/debug/app-debug.apk
