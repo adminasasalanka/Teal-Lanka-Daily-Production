@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Teal Lanka - Data Entry Form</title>
     <style>
-        /* Security & Landscape Orientation Setup */
+        /* Security & Core Styles */
         html, body { 
             font-family: Arial, sans-serif; 
             margin: 0; 
@@ -16,11 +16,10 @@
             -moz-user-select: none; 
             -ms-user-select: none; 
             user-select: none;
-            overflow-x: auto;
         }
         
         .app-wrapper {
-            min-width: 1250px; 
+            max-width: 600px; /* ඕනෑම Screen එකකට ගැලපෙන්න මැදට ගත්තා */
             margin: 0 auto;
         }
         
@@ -95,14 +94,15 @@
         .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; list-style: none; padding: 0; }
         .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
         .nav-links a.active { background: #00875a; }
-        .container { background: white; padding: 0 0 20px 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border-top: 6px solid #00875a; }
-        .form-header { text-align: center; padding: 15px 10px 5px 10px; }
+        
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 6px solid #00875a; }
+        .form-header { text-align: center; padding-bottom: 10px; }
         .form-header h2 { margin: 0; color: #2c3e50; font-size: 24px; font-weight: bold; }
         .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 13px; }
-        .divider { height: 2px; background-color: #00875a; margin: 10px 20px; }
-        .form-body { padding: 0 15px; }
-        label { font-weight: bold; display: block; margin-top: 10px; color: #2c3e50; font-size: 14px; }
+        .divider { height: 2px; background-color: #00875a; margin: 15px 0; }
         
+        .operator-section { margin-bottom: 20px; }
+        .operator-label { font-weight: bold; font-size: 14px; color: #2c3e50; }
         .operator-display-box {
             background: #e9ecef;
             padding: 10px 15px;
@@ -114,40 +114,71 @@
             border: 1px solid #ccc;
         }
 
-        /* 💡 11-Column Grid Layout: Boxes සහ Headers හරියටම සමානව බෙදා ඇත */
-        .data-row, .row-headers { 
-            display: grid; 
-            grid-template-columns: 0.9fr 1.6fr 0.6fr 0.8fr 0.8fr 1fr 1fr 1fr 1fr 1.6fr 0.5fr; 
-            gap: 8px; 
-            align-items: center; 
-            padding: 10px 8px;
+        /* 💡 Google Form Style Item Card (එක අයිතමයක් වෙනම පෙට්ටියක් ලෙස පහළට) */
+        .item-card {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-left: 6px solid #00875a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-        .data-row { background: #f8f9fa; border-radius: 5px; border-left: 4px solid #00875a; margin-bottom: 8px; }
-        .row-headers { font-weight: bold; font-size: 13px; color: #2c3e50; margin-bottom: 5px; text-align: center; }
         
-        /* 💡 Banana (B) සදහා Column 9ක නව Layout එකක් */
-        .data-row.is-banana, .row-headers.is-banana { 
-            grid-template-columns: 0.9fr 1.6fr 0.6fr 0.8fr 0.8fr 2fr 2fr 1.6fr 0.5fr; 
+        .item-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        
+        .item-card-title {
+            font-weight: bold;
+            color: #00875a;
+            font-size: 15px;
         }
 
-        .hide-bottle-box { display: block; width: 100%; }
-        .is-banana .hide-bottle-box { display: none !important; }
+        /* 💡 ප්‍රශ්න සහ Input එක යටතේ එකක් එන විදිහ */
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            font-size: 13px;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
 
-        /* Input field formatting */
-        .data-row input {
+        .form-group input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
             box-sizing: border-box;
             font-size: 14px;
+            background: #ffffff;
+        }
+        
+        .form-group input:focus {
+            border-color: #00875a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 135, 90, 0.1);
         }
 
-        .btn-add-row { background-color: #00875a; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
-        .btn-remove { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
+        /* Banana සඟවන කොටස */
+        .hide-bottle-box { display: block; }
+        .is-banana .hide-bottle-box { display: none !important; }
+
+        .btn-add-row { width: 100%; background-color: #00875a; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; font-size: 15px; }
+        .btn-remove { background-color: #d9534f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
         .btn-submit { width: 100%; padding: 14px; background-color: #2575fc; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
         .success-box { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 8px; text-align: center; margin: 20px; font-weight: bold; border: 2px solid #c3e6cb; }
-        .field-variety { background-color: #e9ecef; color: #495057; cursor: not-allowed; font-weight: bold; }
+        .field-variety { background-color: #e2e8f0; color: #495057; cursor: not-allowed; font-weight: bold; }
     </style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
@@ -183,56 +214,84 @@
     <div class="container">
         <div class="form-header">
             <h2>Teal Lanka Bio Tech</h2>
-            <p>Production Data Entry Form (Landscape Optimized Mode)</p>
+            <p>Production Data Entry Form (Google Form Vertical Style)</p>
         </div>
         <div class="divider"></div>
-        <div class="form-body">
-            <form id="productionForm">
-                <div>
-                    <label>Active Operator Account</label>
-                    <div id="activeOperatorDisplay" class="operator-display-box">Not Logged In</div>
-                </div>
+        
+        <form id="productionForm">
+            <div class="operator-section">
+                <span class="operator-label">Active Operator Account</span><br>
+                <div id="activeOperatorDisplay" class="operator-display-box">Not Logged In</div>
+            </div>
+            
+            <!-- 💡 Dynamic Cards Container -->
+            <div id="dynamicRowsContainer">
                 
-                <div style="margin-top: 20px;">
-                    <!-- 💡 Header Row -->
-                    <div id="headerRow" class="row-headers">
-                        <div>Plant Code</div>
-                        <div>Variety</div>
-                        <div>WK</div>
-                        <div>Transfer</div>
-                        <div>Used</div>
-                        <div>Multy</div>
-                        <div class="hide-bottle-box">M-Bottles</div>
-                        <div>Rooting</div>
-                        <div class="hide-bottle-box">R-Bottles</div>
-                        <div>Remarks</div>
-                        <div>Action</div>
+                <!-- Item Card Starts -->
+                <div class="item-card">
+                    <div class="item-card-header">
+                        <span class="item-card-title">Production Item #1</span>
+                        <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
                     </div>
                     
-                    <!-- 💡 Dynamic Rows Container -->
-                    <div id="dynamicRowsContainer">
-                        <div class="data-row">
-                            <input type="text" class="field-plantcode" placeholder="Code" required oninput="fetchVariety(this)">
-                            <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
-                            <input type="number" class="field-wk" placeholder="WK" required>
-                            <input type="number" class="field-transfer" placeholder="Trans" required>
-                            <input type="number" class="field-used" placeholder="Used" required>
-                            
-                            <input type="number" class="field-multy" placeholder="Multy" required>
-                            <input type="number" class="field-multy-bottles hide-bottle-box" placeholder="Bottles" required>
-                            
-                            <input type="number" class="field-rooting" placeholder="Rooting" required>
-                            <input type="number" class="field-rooting-bottles hide-bottle-box" placeholder="Bottles" required>
-                            
-                            <input type="text" class="field-remarks" placeholder="Remarks">
-                            <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
-                        </div>
+                    <div class="form-group">
+                        <label>Plant Code</label>
+                        <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
                     </div>
-                    <button type="button" class="btn-add-row" id="btnAddRow">+ Add Item Row</button>
+                    
+                    <div class="form-group">
+                        <label>Variety</label>
+                        <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>WK</label>
+                        <input type="number" class="field-wk" placeholder="Enter WK" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Transfer</label>
+                        <input type="number" class="field-transfer" placeholder="Enter Transfer Qty" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Used</label>
+                        <input type="number" class="field-used" placeholder="Enter Used Qty" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="lbl-multy">Multy</label>
+                        <input type="number" class="field-multy" placeholder="Enter Multy Qty" required>
+                    </div>
+                    
+                    <div class="form-group hide-bottle-box">
+                        <label>M-Bottles</label>
+                        <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="lbl-rooting">Rooting</label>
+                        <input type="number" class="field-rooting" placeholder="Enter Rooting Qty" required>
+                    </div>
+                    
+                    <div class="form-group hide-bottle-box">
+                        <label>R-Bottles</label>
+                        <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Remarks</label>
+                        <input type="text" class="field-remarks" placeholder="Any remarks (Optional)">
+                    </div>
                 </div>
-                <button type="submit" class="btn-submit" id="btnSubmit">SUBMIT PRODUCTION DATA</button>
-            </form>
-        </div>
+                <!-- Item Card Ends -->
+                
+            </div>
+            
+            <button type="button" class="btn-add-row" id="btnAddRow">+ Add Another Item</button>
+            <button type="submit" class="btn-submit" id="btnSubmit">SUBMIT PRODUCTION DATA</button>
+        </form>
+        
         <div id="successMessage" class="success-box">Thank You!<br><span style="font-size: 14px; font-weight: normal;">Your Production Data Has Been Submitted Successfully.</span></div>
     </div>
 </div>
@@ -300,6 +359,7 @@
         } else {
             document.getElementById('appLoginModal').style.display = 'flex';
         }
+        updateCardNumbers();
     });
 
     function initializeAppSession() {
@@ -341,38 +401,43 @@
 
     window.fetchVariety = async function(inputElement) {
         const plantCode = inputElement.value.trim().toUpperCase();
-        const row = inputElement.parentElement;
-        const varietyInput = row.querySelector('.field-variety');
+        const card = inputElement.closest('.item-card');
+        const varietyInput = card.querySelector('.field-variety');
         
-        const mBottles = row.querySelector('.field-multy-bottles');
-        const rBottles = row.querySelector('.field-rooting-bottles');
+        const mBottles = card.querySelector('.field-multy-bottles');
+        const rBottles = card.querySelector('.field-rooting-bottles');
         
-        const mMain = row.querySelector('.field-multy');
-        const rMain = row.querySelector('.field-rooting');
+        const mMain = card.querySelector('.field-multy');
+        const rMain = card.querySelector('.field-rooting');
+        
+        const lblMulty = card.querySelector('.lbl-multy');
+        const lblRooting = card.querySelector('.lbl-rooting');
 
         if (plantCode === "") {
             varietyInput.value = "";
-            row.classList.remove('is-banana');
+            card.classList.remove('is-banana');
             mBottles.required = rBottles.required = true;
-            mMain.placeholder = "Multy"; rMain.placeholder = "Rooting";
-            checkHeaderState();
+            mMain.placeholder = "Enter Multy Qty"; rMain.placeholder = "Enter Rooting Qty";
+            lblMulty.innerText = "Multy"; lblRooting.innerText = "Rooting";
             return;
         }
 
         if (plantCode.startsWith('B')) {
-            row.classList.add('is-banana');
+            card.classList.add('is-banana');
             mBottles.required = rBottles.required = false;
             mBottles.value = rBottles.value = "";
-            mMain.placeholder = "Qty (x10)";
-            rMain.placeholder = "Qty (x10)";
+            mMain.placeholder = "Enter Qty (x10)";
+            rMain.placeholder = "Enter Qty (x10)";
+            lblMulty.innerText = "Multy Qty (x10)";
+            lblRooting.innerText = "Rooting Qty (x10)";
         } else {
-            row.classList.remove('is-banana');
+            card.classList.remove('is-banana');
             mBottles.required = rBottles.required = true;
-            mMain.placeholder = "Multy";
-            rMain.placeholder = "Rooting";
+            mMain.placeholder = "Enter Multy Qty";
+            rMain.placeholder = "Enter Rooting Qty";
+            lblMulty.innerText = "Multy";
+            lblRooting.innerText = "Rooting";
         }
-        
-        checkHeaderState();
 
         try {
             const docRef = db.collection("Plants").doc(plantCode);
@@ -390,51 +455,82 @@
         }
     };
 
-    function checkHeaderState() {
-        const firstRow = document.querySelector('#dynamicRowsContainer .data-row');
-        const header = document.getElementById('headerRow');
-        
-        // 💡 පේළි සියල්ලේම headers සහ boxes සමානව Align කිරීමට CSS class එක මාරු කරයි
-        if (firstRow && firstRow.classList.contains('is-banana')) {
-            header.classList.add('is-banana');
-        } else {
-            header.classList.remove('is-banana');
+    function updateCardNumbers() {
+        const cards = document.getElementsByClassName('item-card');
+        for (let i = 0; i < cards.length; i++) {
+            cards[i].querySelector('.item-card-title').innerText = `Production Item #${i + 1}`;
         }
     }
 
     document.getElementById('btnAddRow').addEventListener('click', () => {
-        const newRow = document.createElement('div');
-        newRow.className = 'data-row';
-        newRow.innerHTML = `
-            <input type="text" class="field-plantcode" placeholder="Code" required oninput="fetchVariety(this)">
-            <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
-            <input type="number" class="field-wk" placeholder="WK" required>
-            <input type="number" class="field-transfer" placeholder="Trans" required>
-            <input type="number" class="field-used" placeholder="Used" required>
-            <input type="number" class="field-multy" placeholder="Multy" required>
-            <input type="number" class="field-multy-bottles hide-bottle-box" placeholder="Bottles" required>
-            <input type="number" class="field-rooting" placeholder="Rooting" required>
-            <input type="number" class="field-rooting-bottles hide-bottle-box" placeholder="Bottles" required>
-            <input type="text" class="field-remarks" placeholder="Remarks">
-            <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
+        const container = document.getElementById('dynamicRowsContainer');
+        const newCard = document.createElement('div');
+        newCard.className = 'item-card';
+        newCard.innerHTML = `
+            <div class="item-card-header">
+                <span class="item-card-title">Production Item</span>
+                <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
+            </div>
+            <div class="form-group">
+                <label>Plant Code</label>
+                <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
+            </div>
+            <div class="form-group">
+                <label>Variety</label>
+                <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
+            </div>
+            <div class="form-group">
+                <label>WK</label>
+                <input type="number" class="field-wk" placeholder="Enter WK" required>
+            </div>
+            <div class="form-group">
+                <label>Transfer</label>
+                <input type="number" class="field-transfer" placeholder="Enter Transfer Qty" required>
+            </div>
+            <div class="form-group">
+                <label>Used</label>
+                <input type="number" class="field-used" placeholder="Enter Used Qty" required>
+            </div>
+            <div class="form-group">
+                <label class="lbl-multy">Multy</label>
+                <input type="number" class="field-multy" placeholder="Enter Multy Qty" required>
+            </div>
+            <div class="form-group hide-bottle-box">
+                <label>M-Bottles</label>
+                <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles" required>
+            </div>
+            <div class="form-group">
+                <label class="lbl-rooting">Rooting</label>
+                <input type="number" class="field-rooting" placeholder="Enter Rooting Qty" required>
+            </div>
+            <div class="form-group hide-bottle-box">
+                <label>R-Bottles</label>
+                <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles" required>
+            </div>
+            <div class="form-group">
+                <label>Remarks</label>
+                <input type="text" class="field-remarks" placeholder="Any remarks (Optional)">
+            </div>
         `;
-        document.getElementById('dynamicRowsContainer').appendChild(newRow);
+        container.appendChild(newCard);
         
-        const firstRow = document.querySelector('#dynamicRowsContainer .data-row');
-        if (firstRow && firstRow.querySelector('.field-plantcode').value.toUpperCase().startsWith('B')) {
-            newRow.querySelector('.field-plantcode').value = firstRow.querySelector('.field-plantcode').value;
-            fetchVariety(newRow.querySelector('.field-plantcode'));
+        // පලවෙනි Card එක Banana ද කියලා චෙක් කරලා ඒ අනුව අලුත් එකත් හදනවා
+        const firstCard = container.querySelector('.item-card');
+        if (firstCard && firstCard.querySelector('.field-plantcode').value.toUpperCase().startsWith('B')) {
+            newCard.querySelector('.field-plantcode').value = firstCard.querySelector('.field-plantcode').value;
+            fetchVariety(newCard.querySelector('.field-plantcode'));
         }
-        checkHeaderState();
+        
+        updateCardNumbers();
     });
 
     function removeRow(button) {
         const container = document.getElementById('dynamicRowsContainer');
-        if (container.getElementsByClassName('data-row').length > 1) { 
-            button.parentElement.remove(); 
-            checkHeaderState();
+        if (container.getElementsByClassName('item-card').length > 1) { 
+            button.closest('.item-card').remove(); 
+            updateCardNumbers();
         } else { 
-            alert("At least one data row must be kept!"); 
+            alert("At least one data item must be kept!"); 
         }
     }
 
@@ -455,9 +551,9 @@
         const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
         const currentTimeStr = new Date().toTimeString().split(' ')[0];
 
-        const allDataRows = document.getElementById('dynamicRowsContainer').getElementsByClassName('data-row');
-        for (let row of allDataRows) {
-            const varVal = row.querySelector('.field-variety').value;
+        const allCards = document.getElementById('dynamicRowsContainer').getElementsByClassName('item-card');
+        for (let card of allCards) {
+            const varVal = card.querySelector('.field-variety').value;
             if (varVal === "" || varVal.includes("Unknown Code")) {
                 alert("Please enter valid Plant Codes before submitting!");
                 return;
@@ -483,16 +579,16 @@
             btnSubmit.innerText = "SAVING DATA...";
             const batch = db.batch();
 
-            for (let row of allDataRows) {
+            for (let card of allCards) {
                 const docRef = db.collection("Production_Records").doc();
-                const pCode = row.querySelector('.field-plantcode').value.trim().toUpperCase();
+                const pCode = card.querySelector('.field-plantcode').value.trim().toUpperCase();
                 const isBanana = pCode.startsWith('B');
 
-                const mM = parseFloat(row.querySelector('.field-multy').value) || 0;
-                const mB = parseFloat(row.querySelector('.field-multy-bottles').value) || 1;
+                const mM = parseFloat(card.querySelector('.field-multy').value) || 0;
+                const mB = parseFloat(card.querySelector('.field-multy-bottles').value) || 1;
                 
-                const rM = parseFloat(row.querySelector('.field-rooting').value) || 0;
-                const rB = parseFloat(row.querySelector('.field-rooting-bottles').value) || 1;
+                const rM = parseFloat(card.querySelector('.field-rooting').value) || 0;
+                const rB = parseFloat(card.querySelector('.field-rooting-bottles').value) || 1;
 
                 let finalMulty = isBanana ? (mM * 10) : (mM * mB);
                 let finalRooting = isBanana ? (rM * 10) : (rM * rB);
@@ -503,13 +599,13 @@
                     time: currentTimeStr,
                     operator: activeOp,
                     plantCode: pCode,
-                    variety: row.querySelector('.field-variety').value,
-                    wk: parseInt(row.querySelector('.field-wk').value),
-                    transfer: parseInt(row.querySelector('.field-transfer').value),
-                    used: parseInt(row.querySelector('.field-used').value),
+                    variety: card.querySelector('.field-variety').value,
+                    wk: parseInt(card.querySelector('.field-wk').value),
+                    transfer: parseInt(card.querySelector('.field-transfer').value),
+                    used: parseInt(card.querySelector('.field-used').value),
                     multy: Math.round(finalMulty),
                     rooting: Math.round(finalRooting),
-                    remarks: row.querySelector('.field-remarks').value || '-'
+                    remarks: card.querySelector('.field-remarks').value || '-'
                 });
             }
 
@@ -521,21 +617,53 @@
             setTimeout(() => {
                 form.reset();
                 document.getElementById('dynamicRowsContainer').innerHTML = `
-                    <div class="data-row">
-                        <input type="text" class="field-plantcode" placeholder="Code" required oninput="fetchVariety(this)">
-                        <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
-                        <input type="number" class="field-wk" placeholder="WK" required>
-                        <input type="number" class="field-transfer" placeholder="Trans" required>
-                        <input type="number" class="field-used" placeholder="Used" required>
-                        <input type="number" class="field-multy" placeholder="Multy" required>
-                        <input type="number" class="field-multy-bottles hide-bottle-box" placeholder="Bottles" required>
-                        <input type="number" class="field-rooting" placeholder="Rooting" required>
-                        <input type="number" class="field-rooting-bottles hide-bottle-box" placeholder="Bottles" required>
-                        <input type="text" class="field-remarks" placeholder="Remarks">
-                        <button type="button" class="btn-remove" onclick="removeRow(this)">X</button>
+                    <div class="item-card">
+                        <div class="item-card-header">
+                            <span class="item-card-title">Production Item #1</span>
+                            <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
+                        </div>
+                        <div class="form-group">
+                            <label>Plant Code</label>
+                            <input type="text" class="field-plantcode" placeholder="Enter Plant Code" required oninput="fetchVariety(this)">
+                        </div>
+                        <div class="form-group">
+                            <label>Variety</label>
+                            <input type="text" class="field-variety" placeholder="Auto-filled" readonly tabindex="-1">
+                        </div>
+                        <div class="form-group">
+                            <label>WK</label>
+                            <input type="number" class="field-wk" placeholder="Enter WK" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Transfer</label>
+                            <input type="number" class="field-transfer" placeholder="Enter Transfer Qty" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Used</label>
+                            <input type="number" class="field-used" placeholder="Enter Used Qty" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="lbl-multy">Multy</label>
+                            <input type="number" class="field-multy" placeholder="Enter Multy Qty" required>
+                        </div>
+                        <div class="form-group hide-bottle-box">
+                            <label>M-Bottles</label>
+                            <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="lbl-rooting">Rooting</label>
+                            <input type="number" class="field-rooting" placeholder="Enter Rooting Qty" required>
+                        </div>
+                        <div class="form-group hide-bottle-box">
+                            <label>R-Bottles</label>
+                            <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Remarks</label>
+                            <input type="text" class="field-remarks" placeholder="Any remarks (Optional)">
+                        </div>
                     </div>
                 `;
-                document.getElementById('headerRow').classList.remove('is-banana');
                 successBox.style.display = 'none';
                 form.style.display = 'block';
                 btnSubmit.disabled = false;
@@ -545,6 +673,7 @@
                 document.getElementById('loginPin').value = "";
                 document.getElementById('activeOperatorDisplay').innerText = "Not Logged In";
                 document.getElementById('appLoginModal').style.display = 'flex';
+                updateCardNumbers();
             }, 2500);
 
         } catch (error) {
