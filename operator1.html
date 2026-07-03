@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Teal Lanka - Monthly Production Books</title>
     <style>
-        /* Security & Base Styles */
+        /* Security Fix: Prevent Selection and Copying */
         html, body { 
             margin: 0; 
-            padding: 10px;
+            padding: 0; 
             overflow-y: auto; 
             overflow-x: hidden; 
             font-family: Arial, sans-serif; 
@@ -20,23 +20,6 @@
             user-select: none;
         }
         
-        /* Navigation Links (Navbar) */
-        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; list-style: none; padding: 0; }
-        .nav-links a { text-decoration: none; padding: 8px 15px; background: #007acc; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; }
-        .nav-links a.active { background: #00875a; }
-
-        .container { background: white; padding: 25px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 6px solid #00875a; margin: 0 auto; max-width: 100%; }
-        .form-header { text-align: center; padding-bottom: 10px; }
-        .form-header h2 { margin: 0; color: #2c3e50; font-size: 24px; font-weight: bold; }
-        .form-header p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 13px; }
-        .divider { height: 2px; background-color: #00875a; margin: 15px 0; }
-
-        /* Table Design */
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; text-align: center; }
-        .data-table th { background-color: #00875a; color: white; padding: 10px; font-weight: bold; }
-        .data-table td { padding: 8px; border: 1px solid #ddd; }
-        .data-table tr:nth-child(even) { background-color: #f9f9f9; }
-
         /* Security Blackout Overlay */
         #securityOverlay {
             display: none;
@@ -49,126 +32,154 @@
             padding-top: 50vh;
             font-family: Arial, sans-serif;
             font-size: 20px;
+            font-weight: bold;
         }
 
-        /* 🔄 Screen Rotate Animation Styles */
-        @keyframes spinArrow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
+        @media print {
+            body { display: none !important; }
+        }
+
+        /* 💡 Header එක උඩම ස්ථාවරව තියෙන්න සහ Data Row එක වැහෙන්නේ නැතිවෙන්න padding එක හැදුවා */
+        .container { box-sizing: border-box; padding: 10px; padding-top: 195px; }
+        .fixed-complete-header { position: fixed; top: 0; left: 0; width: 100%; background-color: #f4f4f9; z-index: 1000; padding: 10px 10px 0 10px; box-sizing: border-box; }
+        h2 { text-align: center; color: #28a745; margin: 3px 0; font-size: 18px; }
+        h4 { text-align: center; margin: 0 0 8px 0; color: #555; font-size: 13px; }
+        .nav-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
+        .nav-links a { text-decoration: none; padding: 6px 12px; background: #007acc; color: white; border-radius: 5px; font-size: 13px; font-weight: bold; }
+        .nav-links a.active { background: #28a745; }
+        .filter-area { background: #e9ecef; padding: 6px; border-radius: 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: center; }
+        .filter-group { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+        .filter-group label { font-weight: bold; }
+        .filter-group select, .filter-group input { padding: 5px 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 12px; }
+        
+        /* 💡 Header එක එහෙම්මම ලොක් වෙලා තියෙද්දී ඩේටා ටික විතරක් Scroll වෙන්න සීමාවන් හැදුවා */
+        .table-responsive { 
+            width: 100%; 
+            overflow-x: auto; 
+            overflow-y: auto;
+            max-height: calc(100vh - 215px); /* Screen එකේ ඉතිරි උසට විතරක් Scrollbar එක සීමා කළා */
+            border: 1px solid #aaaaaa; 
+            background: white; 
+            -webkit-overflow-scrolling: touch; 
         }
         
-        .no-data { padding: 20px; color: #999; font-style: italic; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; table-layout: fixed; }
+        th, td { border: 1px solid #aaaaaa; padding: 8px; text-align: center; white-space: nowrap; box-sizing: border-box; }
+        .col-date { width: 50px; }
+        .col-code { width: 90px; }
+        .col-var { width: 150px; }
+        .col-num { width: 65px; }
+        .col-rem { width: 150px; }
+        
+        /* 💡 Header Table එක හැමවෙලේම උඩින්ම Sticky වෙලා ලොක් වෙන්න CSS හැදුවා */
+        .header-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: #28a745; 
+            color: white; 
+            font-weight: bold; 
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.1); 
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+        }
+        .header-table th { background-color: #28a745; padding: 10px 8px; border: 1px solid #aaaaaa; }
+        td[rowspan] { position: sticky; left: 0; background-color: #ffffff !important; z-index: 5; font-weight: bold; }
+        .filled-row { background-color: #e8f5e9; font-weight: bold; color: #1b5e20; }
+        .empty-row { background-color: #ffffff; color: #333; }
     </style>
 </head>
 <body oncontextmenu="return false;" onkeydown="return disableSecurityKeys(event);">
 
-<!-- Rotate Screen Popup Layout -->
-<div id="rotateAlertModal" style="
-    display: none; 
-    position: fixed; 
-    top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(10, 25, 47, 0.98); 
-    z-index: 9999999; 
-    justify-content: center; 
-    align-items: center; 
-    color: white; 
-    text-align: center; 
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    box-sizing: border-box;
-">
-    <div>
-        <!-- 🔄 කරකැවෙන Screen Rotate සලකුණ -->
-        <div class="rotate-icon-wrapper" style="
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 25px auto;
-        ">
-            <div class="rotate-arrow" style="
-                font-size: 80px;
-                color: #00875a;
-                line-height: 100px;
-                animation: spinArrow 2s linear infinite;
-            ">🔄</div>
-        </div>
-
-        <h2 style="margin: 0 0 10px 0; font-size: 22px; color: #ffffff; font-weight: bold;">Please Rotate Your Phone</h2>
-        <p style="margin: 0; font-size: 15px; color: #a8b2d1; line-height: 1.5;">
-            To view the monthly details clearly,<br>please turn on <b>Auto-Rotate</b> and hold your phone horizontally.
-        </p>
-    </div>
-</div>
-
-<!-- Security Overlay -->
 <div id="securityOverlay">🔒 Screen Capture Restricted!</div>
 
-<div class="app-wrapper">
-    <!-- මෙනු බාර් එක (Navigation Links) -->
+<div class="fixed-complete-header">
     <div class="nav-links">
-        <a href="index.html">Data Entry Form</a>
-        <a href="operator1.html" class="active">View Monthly Books</a>
+        <a href="index.html">📄 Data Entry Form</a>
+        <a href="operator1.html" class="active">📊 View Monthly Books</a>
     </div>
 
-    <div class="container">
-        <div class="form-header">
-            <h2>Teal Lanka Bio Tech</h2>
-            <p id="operatorTitle">Monthly Production Summary</p>
+    <h2>MONTHLY PRODUCTION SHEETS</h2>
+    <h4>Teal Lanka Production Plan</h4>
+    
+    <div class="filter-area">
+        <div class="filter-group">
+            <label for="operatorFilter">Select Operator:</label>
+            <select id="operatorFilter">
+                <option value="" disabled selected hidden>Select Operator</option>
+                <option value="Operator 1">Operator RS</option>
+                <option value="Operator 2">Operator TK</option>
+                <option value="Operator 3">Operator K</option>
+                <option value="Operator 4">Operator QST</option>
+            </select>
         </div>
-        <div class="divider"></div>
-        
-        <div style="overflow-x: auto;">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Code</th>
-                        <th>Variety</th>
-                        <th>Wk</th>
-                        <th>Transfer</th>
-                        <th>Used</th>
-                        <th>Multy</th>
-                        <th>Rooting</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr>
-                        <td colspan="9" class="no-data">Loading production records...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="filter-group">
+            <label for="monthFilter">Select Month & Year:</label>
+            <input type="month" id="monthFilter">
         </div>
+    </div>
+
+    <table class="header-table">
+        <thead>
+            <tr>
+                <th class="col-date">Date</th>
+                <th class="col-code">Plant Code</th>
+                <th class="col-var">Variety</th>
+                <th class="col-num">WK</th>
+                <th class="col-num">Transfer</th>
+                <th class="col-num">Used</th>
+                <th class="col-num">Multy</th>
+                <th class="col-num">Rooting</th>
+                <th class="col-rem">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<div class="container">
+    <div class="table-responsive">
+        <table>
+            <colgroup>
+                <col class="col-date"><col class="col-code"><col class="col-var"><col class="col-num">
+                <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-num"><col class="col-rem">
+            </colgroup>
+            <tbody id="productionTableBody"></tbody>
+        </table>
     </div>
 </div>
 
-<!-- Firebase Scripts -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
+    // Robust WebIntoApp Security Controls
     const overlay = document.getElementById('securityOverlay');
 
-    // Security Blackout Features
     function triggerBlackout() {
         overlay.style.display = 'block';
         setTimeout(() => { overlay.style.display = 'none'; }, 1500);
     }
+
     document.addEventListener('visibilitychange', () => { if (document.hidden) triggerBlackout(); });
     window.addEventListener('blur', triggerBlackout);
     window.addEventListener('pagehide', triggerBlackout);
 
     function disableSecurityKeys(e) {
         if (e.keyCode == 44 || (e.metaKey && e.shiftKey && (e.keyCode == 52 || e.keyCode == 51)) || (e.ctrlKey && e.shiftKey && e.keyCode == 83)) {
-            e.preventDefault(); triggerBlackout(); return false;
+            e.preventDefault();
+            triggerBlackout();
+            return false;
         }
         if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 67 || e.keyCode == 83 || e.keyCode == 80))) {
-            e.preventDefault(); return false;
+            e.preventDefault();
+            return false;
         }
     }
+    
+    document.addEventListener('copy', (e) => {
+        e.clipboardData.setData('text/plain', 'Not Allowed');
+        e.preventDefault();
+    });
 
-    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBRLKdJqdC4kwT4qPvHBPjf1vX2viSBxqg",
         authDomain: "teal-lanka-daily-production.firebaseapp.com",
@@ -180,76 +191,89 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // 📱 Screen Orientation Check
-    function checkOrientation() {
-        const rotateModal = document.getElementById('rotateAlertModal');
-        const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    firebase.firestore().enablePersistence().catch(function(err) { console.log(err.code); });
 
-        if (isMobile) {
-            if (window.innerHeight > window.innerWidth) {
-                rotateModal.style.display = 'flex';
-            } else {
-                rotateModal.style.display = 'none';
-            }
-        } else {
-            rotateModal.style.display = 'none';
-        }
-    }
+    const today = new Date();
+    document.getElementById('monthFilter').value = today.toISOString().substring(0, 7);
 
-    window.addEventListener('load', checkOrientation);
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
+    renderMonthlySheet();
+    document.getElementById('monthFilter').addEventListener('change', renderMonthlySheet);
+    document.getElementById('operatorFilter').addEventListener('change', renderMonthlySheet);
 
-    // 📊 Fetch and Display Data from Firebase Firestore
-    document.addEventListener("DOMContentLoaded", () => {
-        const activeOp = sessionStorage.getItem("activeOperator");
-        const activeOpText = sessionStorage.getItem("activeOperatorText");
-        const tableBody = document.getElementById('tableBody');
+    function renderMonthlySheet() {
+        const tableBody = document.getElementById('productionTableBody');
+        tableBody.innerHTML = `<tr><td colspan="9" style="color:blue; font-weight:bold; padding:20px; text-align:center;">Loading Book Data... Please Wait...</td></tr>`; 
 
-        if (!activeOp) {
-            tableBody.innerHTML = `<tr><td colspan="9" class="no-data" style="color:red; font-weight:bold;">🔒 Access Denied. Please log in from the Data Entry Form first.</td></tr>`;
-            return;
+        const selectedMonth = document.getElementById('monthFilter').value; 
+        const selectedOperator = document.getElementById('operatorFilter').value; 
+
+        const [year, month] = selectedMonth.split("-");
+        const daysInMonth = new Date(year, month, 0).getDate(); 
+
+        const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+        const localISODate = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+
+        let monthlyTemplate = {};
+        for (let d = 1; d <= daysInMonth; d++) {
+            let dayStr = d < 10 ? `0${d}` : `${d}`;
+            monthlyTemplate[`${selectedMonth}-${dayStr}`] = []; 
         }
 
-        document.getElementById('operatorTitle').innerText = `Monthly Production Summary (${activeOpText})`;
-
-        // Firestore එකෙන් දැනට ලොග් වී ඉන්න Operator ගේ දත්ත විතරක් අරන් එනවා (ordered by timestamp)
-        db.collection("Production_Records")
-            .where("operator", "==", activeOp)
-            .orderBy("timestamp", "desc")
-            .limit(100) // උපරිම පේළි 100ක් දක්වා පෙන්වීමට සකසා ඇත
-            .get()
-            .then((querySnapshot) => {
-                tableBody.innerHTML = ""; // Loading text එක අයින් කරන්න
-
-                if (querySnapshot.empty) {
-                    tableBody.innerHTML = `<tr><td colspan="9" class="no-data">No production records found for this month.</td></tr>`;
-                    return;
+        // 💡 ඔයාගේ ඔරිජිනල් Query එක එහෙම්මමයි, වෙනස් කලේ නැහැ.
+        db.collection("Production_Records").orderBy("timestamp", "asc").get()
+        .then((querySnapshot) => {
+            tableBody.innerHTML = ""; 
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.operator === selectedOperator && data.date && monthlyTemplate[data.date] !== undefined) {
+                    monthlyTemplate[data.date].push(data); 
                 }
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const rowHtml = `
-                        <tr>
-                            <td><b>${data.date || '-'}</b></td>
-                            <td>${data.plantCode || '-'}</td>
-                            <td style="text-align: left;">${data.variety || '-'}</td>
-                            <td>${data.wk || 0}</td>
-                            <td>${data.transfer || 0}</td>
-                            <td>${data.used || 0}</td>
-                            <td>${data.multy || 0}</td>
-                            <td>${data.rooting || 0}</td>
-                            <td style="text-align: left; font-size:12px; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${data.remarks || '-'}</td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += rowHtml;
-                });
-            })
-            .catch((error) => {
-                console.error("Error fetching data: ", error);
-                tableBody.innerHTML = `<tr><td colspan="9" class="no-data" style="color:red;">Error loading records from database.</td></tr>`;
             });
-    });
+            
+            for (let dateKey in monthlyTemplate) {
+                const recordsArray = monthlyTemplate[dateKey]; 
+                const dayNumber = dateKey.split("-")[2]; 
+
+                if (recordsArray.length > 0) {
+                    recordsArray.forEach((record, index) => {
+                        let row = `<tr class="filled-row">`;
+                        
+                        if (index === 0) {
+                            row += `<td rowspan="${recordsArray.length}" style="vertical-align: middle; color: #333;"><b>${dayNumber}</b></td>`;
+                        }
+                        
+                        row += `
+                            <td>${record.plantCode || '-'}</td>
+                            <td style="text-align:left; white-space: normal; word-break: break-word;">${record.variety || '-'}</td>
+                            <td>${record.wk || '0'}</td>
+                            <td>${record.transfer || '0'}</td>
+                            <td>${record.used || '0'}</td>
+                            <td>${record.multy || '0'}</td>
+                            <td>${record.rooting || '0'}</td>
+                            <td style="text-align:left; white-space: normal; word-break: break-word;">${record.remarks ? record.remarks : '-'}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else {
+                    if (dateKey < localISODate) {
+                        tableBody.innerHTML += `<tr class="empty-row">
+                            <td><b>${dayNumber}</b></td>
+                            <td colspan="8" style="text-align: center; font-weight: bold; color: #777;">Holiday</td>
+                        </tr>`;
+                    } else {
+                        tableBody.innerHTML += `<tr class="empty-row">
+                            <td><b>${dayNumber}</b></td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>`;
+                    }
+                }
+            }
+        })
+        .catch((error) => {
+            tableBody.innerHTML = `<tr><td colspan="9" style="color: red; text-align:center;">Error loading data: ${error.message}</td></tr>`;
+        });
+    }
 </script>
 </body>
 </html>
