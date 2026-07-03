@@ -1,4 +1,4 @@
-name: Build Screenshot Blocked APK
+name: Build Screenshot Blocked APK with Custom Icon
 
 on:
   push:
@@ -26,6 +26,12 @@ jobs:
         cordova platform add android
         cordova plugin add cordova-plugin-privacyscreen
         
+        # Icon folder එක හදාගෙන icon.png එක copy කරනවා
+        mkdir -p res
+        if [ -f "../icon.png" ]; then
+          cp ../icon.png res/icon.png
+        fi
+        
         # නිවැරදි config.xml එක සෑදීම
         cat <<EOF > config.xml
         <?xml version='1.0' encoding='utf-8'?>
@@ -34,10 +40,11 @@ jobs:
             <description>Teal Lanka App</description>
             <author email="dev@callback.com" href="http://cordova.io">Teal Lanka Team</author>
             <content src="https://adminasasalanka.github.io/Teal-Lanka-Daily-Production/" />
+            <access origin="*" />
             <allow-navigation href="https://adminasasalanka.github.io/*" />
             <allow-navigation href="http://*/*" />
             <allow-navigation href="https://*/*" />
-            <plugin name="cordova-plugin-privacyscreen" spec="^1.0.0" />
+            <icon src="res/icon.png" />  <plugin name="cordova-plugin-privacyscreen" spec="^1.0.0" />
         </widget>
         EOF
 
