@@ -179,7 +179,6 @@
         }
 
         .hide-bottle-box { display: block; }
-        .is-banana .hide-bottle-box { display: none !important; }
 
         .btn-add-row { width: 100%; background-color: #ffffff; color: #00875a; border: 2px solid #00875a; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; font-size: 15px; transition: all 0.2s; }
         .btn-add-row:hover { background-color: #00875a; color: white; }
@@ -274,8 +273,8 @@
                     </div>
                     
                     <div class="form-group hide-bottle-box">
-                        <label>M-Bottles :</label>
-                        <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
+                        <label>M-Clump :</label>
+                        <input type="number" class="field-multy-bottles" placeholder="Enter M-Clump count" required>
                     </div>
                     
                     <div class="form-group">
@@ -284,8 +283,8 @@
                     </div>
                     
                     <div class="form-group hide-bottle-box">
-                        <label>R-Bottles :</label>
-                        <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
+                        <label>R-Plants :</label>
+                        <input type="number" class="field-rooting-bottles" placeholder="Enter R-Plants count" required>
                     </div>
                     
                     <div class="form-group">
@@ -351,7 +350,6 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // 🔒 මෙතනින් සියලුම Operatorවරුන්ගේ PIN අංකය 2016 ලෙස ස්ථිර කර ඇත.
     const operatorPins = {
         "Operator 1": "2016",
         "Operator 2": "2016",
@@ -427,29 +425,18 @@
 
         if (plantCode === "") {
             varietyInput.value = "";
-            card.classList.remove('is-banana');
             mBottles.required = rBottles.required = true;
             mMain.placeholder = "Enter Multy amount"; rMain.placeholder = "Enter Rooting amount";
             lblMulty.innerText = "Multy :"; lblRooting.innerText = "Rooting :";
             return;
         }
 
-        if (plantCode.startsWith('B')) {
-            card.classList.add('is-banana');
-            mBottles.required = rBottles.required = false;
-            mBottles.value = rBottles.value = "";
-            mMain.placeholder = "Enter Qty (x10)";
-            rMain.placeholder = "Enter Qty (x10)";
-            lblMulty.innerText = "Multy Qty (x10) :";
-            lblRooting.innerText = "Rooting Qty (x10) :";
-        } else {
-            card.classList.remove('is-banana');
-            mBottles.required = rBottles.required = true;
-            mMain.placeholder = "Enter Multy amount";
-            rMain.placeholder = "Enter Rooting amount";
-            lblMulty.innerText = "Multy :";
-            lblRooting.innerText = "Rooting :";
-        }
+        // B කේත සඳහාද සාමාන්‍ය පරිදිම ක්‍රියාත්මක වේ (x10 ක්‍රමය සහ සඟවන ක්‍රමය ඉවත් කර ඇත)
+        mBottles.required = rBottles.required = true;
+        mMain.placeholder = "Enter Multy amount";
+        rMain.placeholder = "Enter Rooting amount";
+        lblMulty.innerText = "Multy :";
+        lblRooting.innerText = "Rooting :";
 
         try {
             const docRef = db.collection("Plants").doc(plantCode);
@@ -508,16 +495,16 @@
                 <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
             </div>
             <div class="form-group hide-bottle-box">
-                <label>M-Bottles :</label>
-                <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
+                <label>M-Clump :</label>
+                <input type="number" class="field-multy-bottles" placeholder="Enter M-Clump count" required>
             </div>
             <div class="form-group">
                 <label class="lbl-rooting">Rooting :</label>
                 <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
             </div>
             <div class="form-group hide-bottle-box">
-                <label>R-Bottles :</label>
-                <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
+                <label>R-Plants :</label>
+                <input type="number" class="field-rooting-bottles" placeholder="Enter R-Plants count" required>
             </div>
             <div class="form-group">
                 <label>Remarks :</label>
@@ -527,7 +514,7 @@
         container.appendChild(newCard);
         
         const firstCard = container.querySelector('.item-card');
-        if (firstCard && firstCard.querySelector('.field-plantcode').value.toUpperCase().startsWith('B')) {
+        if (firstCard) {
             newCard.querySelector('.field-plantcode').value = firstCard.querySelector('.field-plantcode').value;
             fetchVariety(newCard.querySelector('.field-plantcode'));
         }
@@ -593,7 +580,6 @@
             for (let card of allCards) {
                 const docRef = db.collection("Production_Records").doc();
                 const pCode = card.querySelector('.field-plantcode').value.trim().toUpperCase();
-                const isBanana = pCode.startsWith('B');
 
                 const mM = parseFloat(card.querySelector('.field-multy').value) || 0;
                 const mB = parseFloat(card.querySelector('.field-multy-bottles').value) || 1;
@@ -601,8 +587,9 @@
                 const rM = parseFloat(card.querySelector('.field-rooting').value) || 0;
                 const rB = parseFloat(card.querySelector('.field-rooting-bottles').value) || 1;
 
-                let finalMulty = isBanana ? (mM * 10) : (mM * mB);
-                let finalRooting = isBanana ? (rM * 10) : (rM * rB);
+                // සියලුම කේතයන් (B ඇතුළුව) මුල් අගය x Clump/Plant ලෙස ගුණ කර ගණනය කෙරේ.
+                let finalMulty = mM * mB;
+                let finalRooting = rM * rB;
 
                 batch.set(docRef, {
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -658,16 +645,16 @@
                             <input type="number" class="field-multy" placeholder="Enter Multy amount" required>
                         </div>
                         <div class="form-group hide-bottle-box">
-                            <label>M-Bottles :</label>
-                            <input type="number" class="field-multy-bottles" placeholder="Enter M-Bottles count" required>
+                            <label>M-Clump :</label>
+                            <input type="number" class="field-multy-bottles" placeholder="Enter M-Clump count" required>
                         </div>
                         <div class="form-group">
                             <label class="lbl-rooting">Rooting :</label>
                             <input type="number" class="field-rooting" placeholder="Enter Rooting amount" required>
                         </div>
                         <div class="form-group hide-bottle-box">
-                            <label>R-Bottles :</label>
-                            <input type="number" class="field-rooting-bottles" placeholder="Enter R-Bottles count" required>
+                            <label>R-Plants :</label>
+                            <input type="number" class="field-rooting-bottles" placeholder="Enter R-Plants count" required>
                         </div>
                         <div class="form-group">
                             <label>Remarks :</label>
