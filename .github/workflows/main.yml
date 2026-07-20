@@ -36,7 +36,7 @@ jobs:
         cat <<EOF > config.xml
         <?xml version='1.0' encoding='utf-8'?>
         <widget id="com.teallanka.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-            <name>TealLanka</name>
+            <name>Nucell Rootiva</name>
             <description>Teal Lanka App</description>
             <author email="dev@callback.com" href="http://cordova.io">Teal Lanka Team</author>
             <content src="https://adminasasalanka.github.io/Teal-Lanka-Daily-Production/" />
