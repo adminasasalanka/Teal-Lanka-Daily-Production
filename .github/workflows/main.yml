@@ -28,8 +28,8 @@ jobs:
         
         # Icon folder එක හදාගෙන icon.png එක copy කරනවා
         mkdir -p res
-        if [ -f "../icon.png" ]; then
-          cp ../icon.png res/icon.png
+        if [ -f "../appicon.png" ]; then
+          cp ../appicon.png res/icon.png
         fi
         
         # නිවැරදි config.xml එක සෑදීම
@@ -44,7 +44,7 @@ jobs:
             <allow-navigation href="https://adminasasalanka.github.io/*" />
             <allow-navigation href="http://*/*" />
             <allow-navigation href="https://*/*" />
-            <icon src="res/icon.png" />  <plugin name="cordova-plugin-privacyscreen" spec="^1.0.0" />
+            <icon src="res/appicon.png" />  <plugin name="cordova-plugin-privacyscreen" spec="^1.0.0" />
         </widget>
         EOF
 
