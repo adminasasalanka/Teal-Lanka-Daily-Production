@@ -44,7 +44,7 @@ jobs:
             <allow-navigation href="https://adminasasalanka.github.io/*" />
             <allow-navigation href="http://*/*" />
             <allow-navigation href="https://*/*" />
-            <icon src="res/appicon.png" />  <plugin name="cordova-plugin-privacyscreen" spec="^1.0.0" />
+            <icon src="res/icon.png" />  <plugin name="cordova-plugin-privacyscreen" spec="^1.0.0" />
         </widget>
         EOF
 
